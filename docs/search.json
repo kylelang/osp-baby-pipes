@@ -1,0 +1,220 @@
+[
+  {
+    "objectID": "tutorials/other_pipes.html",
+    "href": "tutorials/other_pipes.html",
+    "title": "Different Pipe Operators in R",
+    "section": "",
+    "text": "The Exposition Pipe %$%\nThe exposition pipe (%$%), also from the magrittr package, behaves slightly differently. Instead of passing a dataset as an argument, it exposes the variable names of a data frame directly to the next function.\nFor example, we can write:\n\nbfi %$% lm(extra ~ age)\n\n\nCall:\nlm(formula = extra ~ age)\n\nCoefficients:\n(Intercept)          age  \n    3.97269      0.00599  \n\n\nThis works because %$% allows the variables extra and age to be used as if they were objects in the global environment, even though they come from within bfi. In practice this means that what we just did is equivalent to:\n\nlm(bfi$extra ~ bfi$age)\n\n\nCall:\nlm(formula = bfi$extra ~ bfi$age)\n\nCoefficients:\n(Intercept)      bfi$age  \n    3.97269      0.00599  \n\n\n\n\nThe Base R Pipe |&gt;\nAs of R 4.1, there’s also a native pipe operator: |&gt;. It works like %&gt;% but is simpler and doesn’t require loading dplyr or magrittr.\nYou can re-create the first example using only base R syntax:\n\nbfi[c(\"agree\", \"consc\", \"extra\", \"neuro\", \"open\")] |&gt;\n  cov(use = \"pairwise\") |&gt;\n  diag() |&gt;\n  sqrt()\n\n    agree     consc     extra     neuro      open \n0.8984019 0.9513469 1.0609041 1.1963314 0.8083739 \n\n\nThe base pipe is great for lightweight pipelines, while the %&gt;% pipe remains preferred for more complex workflows, especially those using tidyverse functions like mutate(), filter(), and select().\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\n\n\n\n\n\nPractice\n\n\n\nUse the pipe and exposition pipe to calculate the correlation between age and agree for adults in the bfi data.\n\n Interactive Editor Hint Solution\n\n\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\n\nYou can use the cor() function to compute the correlation between two variables.\n\n\n\nbfi %&gt;%\n  filter(age &gt;= 18) %$%\n  cor(age, agree)\n\n[1] 0.1546906\n\n\n\n\n\n\n\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Open-Stat-Prog",
+      "Different Pipe Operators in R"
+    ]
+  },
+  {
+    "objectID": "tutorials/index.html",
+    "href": "tutorials/index.html",
+    "title": "Pipes",
+    "section": "",
+    "text": "When data workflows grow beyond one or two steps, code quickly becomes hard to read: nested parentheses pile up, temporary objects proliferate, and the sequence of operations gets obscured. Pipes solve this by letting you write transformations in the order you think about them—left to right, top to bottom—so each result flows naturally into the next step.\nThe pipe operator, written as %&gt;%, is provided by the magrittr package . It works by taking the output of one expression and feeding it as the first argument to the next function. This simple idea makes your code easier to read, debug, and modify, especially for multi-step analyses.\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "quizzes/questions/webr.html",
+    "href": "quizzes/questions/webr.html",
+    "title": "Question",
+    "section": "",
+    "text": "Question\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nUsing a pipeline, calculate the mean of the agree variable for participants who are older than 30 years. Use the WebR to write your code and insert the result in the box, rounding to two decimal places.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nRound your answer to two decimal places.\n\n\nSolution\nThe correct pipeline code to calculate the mean of the agree variable for participants older than 30 years is:\nbfi %&gt;% filter(age&gt;30) %&gt;% select(agree) %&gt;% unlist() %&gt;% mean()\nAfter rounding, we get 4.84.\n\n\nMeta-information\nexname: WebR extype: num exsolution: 4.84 extol: 0.01\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "quizzes/questions/mean.html",
+    "href": "quizzes/questions/mean.html",
+    "title": "Question",
+    "section": "",
+    "text": "Which command correctly uses pipes to compute the mean of the variable age in bfi?\n\n\n\nbfi$age %&gt;% mean()\nbfi %$% mean(age)\nbfi$age |&gt; mean()\nbfi %&gt;% .$age %&gt;% mean()\nbfi %&gt;% mean(age)\nmean(bfi$age) %&gt;% ()\nbfi |&gt; mean(age)\nbfi %&gt;% mean()$age\nbfi %&gt;% mean(age, .)\nmean() %&gt;% bfi$age"
+  },
+  {
+    "objectID": "quizzes/questions/mean.html#answerlist",
+    "href": "quizzes/questions/mean.html#answerlist",
+    "title": "Question",
+    "section": "",
+    "text": "bfi$age %&gt;% mean()\nbfi %$% mean(age)\nbfi$age |&gt; mean()\nbfi %&gt;% .$age %&gt;% mean()\nbfi %&gt;% mean(age)\nmean(bfi$age) %&gt;% ()\nbfi |&gt; mean(age)\nbfi %&gt;% mean()$age\nbfi %&gt;% mean(age, .)\nmean() %&gt;% bfi$age"
+  },
+  {
+    "objectID": "quizzes/questions/mean.html#answerlist-1",
+    "href": "quizzes/questions/mean.html#answerlist-1",
+    "title": "Question",
+    "section": "Answerlist",
+    "text": "Answerlist\n\nTRUE: This command correctly uses the pipe operator %&gt;% to pass bfi$age to the mean() function.\nTRUE: This command correctly uses the magrittr pipe operator %$% to expose the columns of bfi and then computes the mean of age.\nTRUE: This command correctly uses the base R pipe operator |&gt; to pass bfi$age to the mean() function.\nTRUE: This command correctly uses the pipe operator %&gt;% to extract age from bfi and then computes the mean.\nFALSE: This command incorrectly attempts to compute the mean of age directly on the bfi data frame without extracting the age variable first.\nFALSE: This command incorrectly attempts to pipe the result of mean(bfi$age) into an empty function call ().\nFALSE: This command incorrectly attempts to compute the mean of age directly on the bfi data frame using the base R pipe operator |&gt;.\nFALSE: This command incorrectly attempts to access age from the result of mean() called on bfi.\nFALSE: This command incorrectly attempts to compute the mean of age by passing age as an argument to mean() without extracting it from bfi.\nFALSE: This command incorrectly attempts to pipe the result of mean() into bfi$age. Meta-information ================ exname: mean extype: mchoice exsolution: 1111000000 exshuffle: 5"
+  },
+  {
+    "objectID": "quizzes/questions/default_arguments2.html",
+    "href": "quizzes/questions/default_arguments2.html",
+    "title": "Question",
+    "section": "",
+    "text": "Use the following help file excerpt to answer the question below.\n\n\n\n\n\n\n\n\ncor\nR Documentation\n\n\n\n\n\n\n\n\n\nvar(x, y = NULL, na.rm = FALSE, use)\n\ncov(x, y = NULL, use = \"everything\",\n    method = c(\"pearson\", \"kendall\", \"spearman\"))\n\ncor(x, y = NULL, use = \"everything\",\n    method = c(\"pearson\", \"kendall\", \"spearman\"))\n\ncov2cor(V)\n\n\n\n\n\n\n\n\nWhat is the default value for the use argument of the cor() function?\n\n\n\n\"everything\"\n\"Everything\n\"spearman\"\n\"pearson\"\n\"kendall\"\nc(\"pearson\", \"spearman\", \"kendall\")\nNULL\nmethod\ny\nx\nThe use argument does not have a defined default value."
+  },
+  {
+    "objectID": "quizzes/questions/default_arguments2.html#answerlist",
+    "href": "quizzes/questions/default_arguments2.html#answerlist",
+    "title": "Question",
+    "section": "",
+    "text": "\"everything\"\n\"Everything\n\"spearman\"\n\"pearson\"\n\"kendall\"\nc(\"pearson\", \"spearman\", \"kendall\")\nNULL\nmethod\ny\nx\nThe use argument does not have a defined default value."
+  },
+  {
+    "objectID": "quizzes/questions/default_arguments2.html#answerlist-1",
+    "href": "quizzes/questions/default_arguments2.html#answerlist-1",
+    "title": "Question",
+    "section": "Answerlist",
+    "text": "Answerlist\n\nCorrect\nWrong: The “E” should be lowercase\nWrong: This is one of the possible methods\nWrong: This is one of the possible methods\nWrong: This is one of the possible methods\nWrong: These are all of the possible methods\nWrong: This is the default value for y\nWrong: This is an argument name\nWrong: This is an argument name\nWrong: This is an argument name\nWrong: There is a default value defined for use."
+  },
+  {
+    "objectID": "quizzes/questions/arithmetic2.html",
+    "href": "quizzes/questions/arithmetic2.html",
+    "title": "Question",
+    "section": "",
+    "text": "Question\nUsing %&gt;%, write (in one line) how you would compute the squared variance of the column bmi inside health, assuming bmi exists.\n\n\nSolution\nThe correct code is health$bmi %&gt;% var() %&gt;% sqrt().\n\n\nMeta-information\nexname: Arithmetic extype: str exsolution: health %&gt;% pull(bmi) %&gt;% var() extol: 0.01\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "in_progress.html",
+    "href": "in_progress.html",
+    "title": "In Progress",
+    "section": "",
+    "text": "Sorry, we’re still building the page you’ve requested.\nIt’s almost done…really.\nWe’re just working through a few minor issues…\n\n\n\nImage Source"
+  },
+  {
+    "objectID": "conclusion.html",
+    "href": "conclusion.html",
+    "title": "Conclusion",
+    "section": "",
+    "text": "Use this page to provide some kind of brief wrap-up.",
+    "crumbs": [
+      "Open-Stat-Prog",
+      "Conclusion"
+    ]
+  },
+  {
+    "objectID": "conclusion.html#next-steps",
+    "href": "conclusion.html#next-steps",
+    "title": "Conclusion",
+    "section": "Next Steps",
+    "text": "Next Steps\nIf your module feeds naturally into another, link that module through the button below as a suggestion for further study.\n\nHere, we’re linking to the First Steps module.\n\n\n\n Next Module",
+    "crumbs": [
+      "Open-Stat-Prog",
+      "Conclusion"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Pipes",
+    "section": "",
+    "text": "In this module, you will learn how to compose functions using the pipe operator, |&gt;.",
+    "crumbs": [
+      "Open-Stat-Prog",
+      "Overview"
+    ]
+  },
+  {
+    "objectID": "index.html#learning-goals",
+    "href": "index.html#learning-goals",
+    "title": "Pipes",
+    "section": "Learning Goals",
+    "text": "Learning Goals\nAfter completing this module, you will be able to:\n\nExplain the benefits of pipelines versus other methods of composing functions.\nRecognize situations in your analyses where a pipeline would be appropriate.\nBuild pipelines to compose a series of R functions into a single command.\nUse four different types of pipe operator in your pipelines, as appropriate:\n\nThe Base R pipe: |&gt;\nThe dplyr pipe: %&gt;%\nThe exposition pipe: %$%\nThe assignment pipe: %&lt;&gt;%\n\n\nClick the button below to get started with the first tutorial.\n\n\n Begin Tutorial",
+    "crumbs": [
+      "Open-Stat-Prog",
+      "Overview"
+    ]
+  },
+  {
+    "objectID": "quizzes/index.html",
+    "href": "quizzes/index.html",
+    "title": "Knowledge Quiz: Tutorial 1",
+    "section": "",
+    "text": "Note\n\n\n\n\nClick the check-mark button to check your answer.\nClick the question-mark button to see an explanation of the solution.\n\n\n\n\n\n\nWhich command correctly uses pipes to compute the mean of the variable age in bfi?\n\nmean() %&gt;% bfi$agebfi %$% mean(age)mean(bfi$age) %&gt;% ()bfi %&gt;% mean(age)bfi$age |&gt; mean()\n\n\n\n\nNA\nTRUE: This command correctly uses the magrittr pipe operator %$% to expose the columns of bfi and then computes the mean of age.\nFALSE: This command incorrectly attempts to pipe the result of mean(bfi$age) into an empty function call ().\nFALSE: This command incorrectly attempts to compute the mean of age directly on the bfi data frame without extracting the age variable first.\nTRUE: This command correctly uses the base R pipe operator |&gt; to pass bfi$age to the mean() function.\n\n\n\n\n\nWhich use of the placeholder . is valid when the data are not the first argument?\n\nbfi |&gt; lm(extra ~ age, data = .)bfi %&gt;% .(extra ~ age)lm(data = bfi, extra ~ age) %&gt;% .bfi %&gt;% lm(., extra ~ age)bfi %&gt;% lm(extra ~ age, data = .)\n\n\n\n\nFALSE: This use of the placeholder is the correct syntax for passing the data argument in a pipe, but it will not work with the base R pipe operator.\nFALSE: The placeholder is incorrectly used as a function.\nFALSE: The placeholder is incorrectly used after the function call.\nFALSE: The placeholder is incorrectly used as the first argument.\nTRUE: This use of the placeholder is the correct for passing the data argument in a pipe.\n\n\n\n\n\nUsing %&gt;%, write (in one line) how you would compute the squared variance of the column bmi inside health, assuming bmi exists.\n\n\n\nThe correct code is health$bmi %&gt;% var() %&gt;% sqrt().\n\n\n\n\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nUsing a pipeline, calculate the mean of the agree variable for participants who are older than 30 years. Use the WebR to write your code and insert the result in the box, rounding to two decimal places.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\nRound your answer to two decimal places.\n\n\n\nThe correct pipeline code to calculate the mean of the agree variable for participants older than 30 years is:\nbfi %&gt;% filter(age&gt;30) %&gt;% select(agree) %&gt;% unlist() %&gt;% mean()\nAfter rounding, we get 4.84.\n\n\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Open-Stat-Prog",
+      "Knowledge Quiz"
+    ]
+  },
+  {
+    "objectID": "quizzes/questions/bmi.html",
+    "href": "quizzes/questions/bmi.html",
+    "title": "Question",
+    "section": "",
+    "text": "Question\nUsing %&gt;%, write (in one line) how you would compute the squared variance of the column bmi inside health, assuming bmi exists.\n\n\nSolution\nThe correct code is health$bmi %&gt;% var() %&gt;% sqrt().\n\n\nMeta-information\nexname: Squared Variance of BMI extype: str exsolution: health %&gt;% pull(bmi) %&gt;% var()\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "quizzes/questions/logical.html",
+    "href": "quizzes/questions/logical.html",
+    "title": "Question",
+    "section": "",
+    "text": "What is the key difference between a for loop and a while loop?\n\n\n\nA for loop repeats a fixed number of times; a while loop repeats until a condition becomes false.\nA for loop is slower than a while loop.\nA for loop can only iterate over numeric vectors.\nA while loop cannot contain conditional statements.\nA while loop must always run at least once.\nA for loop cannot modify objects outside the loop.\nA for loop checks its condition at the end of the loop.\nA while loop cannot iterate over data frame columns.\nA for loop cannot be nested inside another loop.\nBoth loops behave the same; the difference is only stylistic."
+  },
+  {
+    "objectID": "quizzes/questions/logical.html#answerlist",
+    "href": "quizzes/questions/logical.html#answerlist",
+    "title": "Question",
+    "section": "",
+    "text": "A for loop repeats a fixed number of times; a while loop repeats until a condition becomes false.\nA for loop is slower than a while loop.\nA for loop can only iterate over numeric vectors.\nA while loop cannot contain conditional statements.\nA while loop must always run at least once.\nA for loop cannot modify objects outside the loop.\nA for loop checks its condition at the end of the loop.\nA while loop cannot iterate over data frame columns.\nA for loop cannot be nested inside another loop.\nBoth loops behave the same; the difference is only stylistic."
+  },
+  {
+    "objectID": "quizzes/questions/logical.html#answerlist-1",
+    "href": "quizzes/questions/logical.html#answerlist-1",
+    "title": "Question",
+    "section": "Answerlist",
+    "text": "Answerlist\n\nTRUE\nFALSE:\nTRUE: 14 is strictly less than 48\nTRUE: 7 is equal to 7, and 7 is greater than or equal to 7\nTRUE: “alice” is not equal to “bob”, but “alice is equal to”alice”\nTRUE: 6 is not strictly greater than 7, and that result is negated\nTRUE: Trivially\nFALSE: Trivially\nFALSE: “foo” is not equal to “bar”\nFALSE: 7 is equal to 7, but 7 is not strictly greater than 7\nFALSE: “alice” is not equal to “bob”, and “alice” is equal to “alice”\nFALSE: “alice” is not equal to “bob”\nFALSE: Trivial negation\nFALSE: Trivially"
+  },
+  {
+    "objectID": "quizzes/questions/placeholder.html",
+    "href": "quizzes/questions/placeholder.html",
+    "title": "Question",
+    "section": "",
+    "text": "Which use of the placeholder . is valid when the data are not the first argument?\n\n\n\nbfi %&gt;% lm(extra ~ age, .)\nbfi %&gt;% lm(extra ~ age, data = .)\nbfi %&gt;% lm(extra ~ age)\nbfi %&gt;% .(extra ~ age)\nlm(data = bfi, extra ~ age) %&gt;% .\nlm(extra ~ age, data = .) %&gt;% bfi\nbfi %&gt;% lm(., extra ~ age)\nbfi |&gt; lm(extra ~ age, data = .)\nbfi |&gt; data = . |&gt; lm(extra ~ age)"
+  },
+  {
+    "objectID": "quizzes/questions/placeholder.html#answerlist",
+    "href": "quizzes/questions/placeholder.html#answerlist",
+    "title": "Question",
+    "section": "",
+    "text": "bfi %&gt;% lm(extra ~ age, .)\nbfi %&gt;% lm(extra ~ age, data = .)\nbfi %&gt;% lm(extra ~ age)\nbfi %&gt;% .(extra ~ age)\nlm(data = bfi, extra ~ age) %&gt;% .\nlm(extra ~ age, data = .) %&gt;% bfi\nbfi %&gt;% lm(., extra ~ age)\nbfi |&gt; lm(extra ~ age, data = .)\nbfi |&gt; data = . |&gt; lm(extra ~ age)"
+  },
+  {
+    "objectID": "quizzes/questions/placeholder.html#answerlist-1",
+    "href": "quizzes/questions/placeholder.html#answerlist-1",
+    "title": "Question",
+    "section": "Answerlist",
+    "text": "Answerlist\n\nTRUE: This use of the placeholder is the correct syntax for passing the data argument in a pipe.\nTRUE: This use of the placeholder is the correct for passing the data argument in a pipe.\nFALSE: The placeholder is not used; the data argument is missing.\nFALSE: The placeholder is incorrectly used as a function.\nFALSE: The placeholder is incorrectly used after the function call.\nFALSE: The placeholder is incorrectly used after the pipe operator.\nFALSE: The placeholder is incorrectly used as the first argument.\nFALSE: This use of the placeholder is the correct syntax for passing the data argument in a pipe, but it will not work with the base R pipe operator.\nFALSE: The syntax is incorrect; the placeholder cannot be used in this way."
+  },
+  {
+    "objectID": "tutorials/basic_pipes.html",
+    "href": "tutorials/basic_pipes.html",
+    "title": "Usage",
+    "section": "",
+    "text": "The pipe operator simply passes the output from the upstream function into the first argument of the downstream function. Hence, these two expressios are equivalent:\n\nmean(bfi$age)\n\n[1] 28.78214\n\nbfi$age |&gt; mean()\n\n[1] 28.78214\n\n\nThe data piped into a function only fill the first argument. We’re free to specify any additional inputs in the normal way. Hence, the following to expressions are also equivalent.\n\nvar(bfi$a1, na.rm = TRUE)\n\n[1] 1.981724\n\nbfi$a1 |&gt; var(na.rm = TRUE)\n\n[1] 1.981724\n\n\n\n\nMany R functions, particularly those that use a so-called formula interface, don’t take the input data as their first argument. If you try to include such a function in a normal pipeline, it won’t work.\n\nbfi |&gt; lm(extra ~ age)\n\nError in `as.data.frame.default()`:\n! cannot coerce class '\"formula\"' to a data.frame\n\n\nIn these cases, you can use the special placeholder token _ to tell R explicitly where to insert the piped object.\n\nbfi |&gt; lm(extra ~ age, data = _)\n\n\nCall:\nlm(formula = extra ~ age, data = bfi)\n\nCoefficients:\n(Intercept)          age  \n    3.97269      0.00599  \n\n\nNote that we must name the argument to which we assign _. The following won’t work.\n\nbfi |&gt; lm(extra ~ age, _)\n\nError in lm(extra ~ age, \"_\"): pipe placeholder can only be used as a named argument (&lt;input&gt;:1:8)\n\n\nThis trick makes it possible to use nearly any function in a pipeline, even when the data aren’t the first argument.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\n\n\n\n\n\nPractice\n\n\n\nUse pipes to perform the following data manipulations on the bfi dataset:\n\nCreate a new variable age_centered that centers age around its mean.\nFilter the dataset to include only participants with age greater than 25.\nSelect only the new centered age variable, the scores for agreeableness and conscientiousness, and the demographic variables gen and ed.\nDisplay the first 20 rows of the resulting dataset.\n\n\n Interactive Editor Solution\n\n\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\n\n\nbfi |&gt;\n  mutate(age_centered = age - mean(age, na.rm = TRUE)) |&gt;\n  filter(age &gt; 25) |&gt;\n  select(age_centered, agree, consc, gen, ed) |&gt;\n  head(20)\n\n   age_centered agree consc    gen ed\n1    39.2178571   5.6  2.80   male  5\n2    -1.7821429   5.4  3.80 female  2\n3    22.2178571   4.0  5.80 female  5\n4     4.2178571   3.8  4.20 female  3\n5    12.2178571   5.6  4.60 female  3\n6     1.2178571   6.0  6.00   male NA\n7    19.2178571   4.6  5.20 female  5\n8    11.2178571   5.4  3.80 female  3\n9    -1.7821429   3.8  4.00 female  4\n10   14.2178571   3.8  4.40 female  1\n11   -2.7821429   5.2  4.80 female  4\n12   -2.7821429   4.4  4.00   male  4\n13   -2.7821429   4.6  3.80   male  5\n14   21.2178571   5.0  5.40 female  2\n15    0.2178571   4.2  4.80   male  5\n16    3.2178571   4.2  2.80   male  1\n17    3.2178571   5.6  5.25 female  4\n18   -2.7821429   4.0  5.20 female  3\n19   -1.7821429   5.8  5.00 female  5\n20    7.2178571   4.6  4.80 female  5\n\n\n\n\n\n\n\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\n\n\n\n\n\nPractice\n\n\n\nUse a pipeline to calculate the square root of the mean of the agreeableness scale score for males in the bfi data.\n\n Interactive Editor Hint Solution\n\n\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\n\nYou can use the unlist() function to covert a list to a vector.\n\n\n\nbfi |&gt;\n  filter(gen == \"male\") |&gt;\n  select(agree) |&gt;\n  unlist() |&gt;\n  mean(na.rm = TRUE) |&gt;\n  sqrt()\n\n[1] 2.094169",
+    "crumbs": [
+      "Open-Stat-Prog",
+      "Usage"
+    ]
+  },
+  {
+    "objectID": "tutorials/basic_pipes.html#how-pipes-work",
+    "href": "tutorials/basic_pipes.html#how-pipes-work",
+    "title": "Usage",
+    "section": "",
+    "text": "The pipe operator simply passes the output from the upstream function into the first argument of the downstream function. Hence, these two expressios are equivalent:\n\nmean(bfi$age)\n\n[1] 28.78214\n\nbfi$age |&gt; mean()\n\n[1] 28.78214\n\n\nThe data piped into a function only fill the first argument. We’re free to specify any additional inputs in the normal way. Hence, the following to expressions are also equivalent.\n\nvar(bfi$a1, na.rm = TRUE)\n\n[1] 1.981724\n\nbfi$a1 |&gt; var(na.rm = TRUE)\n\n[1] 1.981724\n\n\n\n\nMany R functions, particularly those that use a so-called formula interface, don’t take the input data as their first argument. If you try to include such a function in a normal pipeline, it won’t work.\n\nbfi |&gt; lm(extra ~ age)\n\nError in `as.data.frame.default()`:\n! cannot coerce class '\"formula\"' to a data.frame\n\n\nIn these cases, you can use the special placeholder token _ to tell R explicitly where to insert the piped object.\n\nbfi |&gt; lm(extra ~ age, data = _)\n\n\nCall:\nlm(formula = extra ~ age, data = bfi)\n\nCoefficients:\n(Intercept)          age  \n    3.97269      0.00599  \n\n\nNote that we must name the argument to which we assign _. The following won’t work.\n\nbfi |&gt; lm(extra ~ age, _)\n\nError in lm(extra ~ age, \"_\"): pipe placeholder can only be used as a named argument (&lt;input&gt;:1:8)\n\n\nThis trick makes it possible to use nearly any function in a pipeline, even when the data aren’t the first argument.\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\n\n\n\n\n\nPractice\n\n\n\nUse pipes to perform the following data manipulations on the bfi dataset:\n\nCreate a new variable age_centered that centers age around its mean.\nFilter the dataset to include only participants with age greater than 25.\nSelect only the new centered age variable, the scores for agreeableness and conscientiousness, and the demographic variables gen and ed.\nDisplay the first 20 rows of the resulting dataset.\n\n\n Interactive Editor Solution\n\n\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\n\n\nbfi |&gt;\n  mutate(age_centered = age - mean(age, na.rm = TRUE)) |&gt;\n  filter(age &gt; 25) |&gt;\n  select(age_centered, agree, consc, gen, ed) |&gt;\n  head(20)\n\n   age_centered agree consc    gen ed\n1    39.2178571   5.6  2.80   male  5\n2    -1.7821429   5.4  3.80 female  2\n3    22.2178571   4.0  5.80 female  5\n4     4.2178571   3.8  4.20 female  3\n5    12.2178571   5.6  4.60 female  3\n6     1.2178571   6.0  6.00   male NA\n7    19.2178571   4.6  5.20 female  5\n8    11.2178571   5.4  3.80 female  3\n9    -1.7821429   3.8  4.00 female  4\n10   14.2178571   3.8  4.40 female  1\n11   -2.7821429   5.2  4.80 female  4\n12   -2.7821429   4.4  4.00   male  4\n13   -2.7821429   4.6  3.80   male  5\n14   21.2178571   5.0  5.40 female  2\n15    0.2178571   4.2  4.80   male  5\n16    3.2178571   4.2  2.80   male  1\n17    3.2178571   5.6  5.25 female  4\n18   -2.7821429   4.0  5.20 female  3\n19   -1.7821429   5.8  5.00 female  5\n20    7.2178571   4.6  4.80 female  5\n\n\n\n\n\n\n\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\n\n\n\n\n\nPractice\n\n\n\nUse a pipeline to calculate the square root of the mean of the agreeableness scale score for males in the bfi data.\n\n Interactive Editor Hint Solution\n\n\n\nPlease enable JavaScript to experience the dynamic code cell content on this page.\n\n\nYou can use the unlist() function to covert a list to a vector.\n\n\n\nbfi |&gt;\n  filter(gen == \"male\") |&gt;\n  select(agree) |&gt;\n  unlist() |&gt;\n  mean(na.rm = TRUE) |&gt;\n  sqrt()\n\n[1] 2.094169",
+    "crumbs": [
+      "Open-Stat-Prog",
+      "Usage"
+    ]
+  },
+  {
+    "objectID": "tutorials/motivation.html",
+    "href": "tutorials/motivation.html",
+    "title": "Motivation",
+    "section": "",
+    "text": "When you perform several transformations in R, your code can quickly become cluttered with nested parentheses or a series of temporary variables. Pipes offer a cleaner, more intuitive alternative: they let you write code that mirrors the logical flow of your analysis. Each step passes its output directly into the next, creating a readable sequence of operations that tells the story of your data transformation from start to finish.\nFor example, consider using this sequence of operations to compute a vector of standard deviations with the bfi dataset:\n\nSelect five personality scale scores.\nCompute their covariance matrix.\nExtract the variances from this matrix.\nTake the square roots to obtain standard deviations.\n\nWe could implement these calculations as the following nested function calls.\n\nsd &lt;- sqrt(\n  diag(\n    cov(\n      bfi[c(\"agree\", \"consc\", \"extra\", \"neuro\", \"open\")],\n      use = \"pairwise\"\n    )\n  )\n)\nsd\n\n    agree     consc     extra     neuro      open \n0.8984019 0.9513469 1.0609041 1.1963314 0.8083739 \n\n\nThis approach does the job, but it’s certainly not ideal (unless you happen to be a big fan of elisp). The main issue is readability: our code is difficult to parse because you need to read the function calls from the inside out to understand the sequence of operations. The situation gets even worse if we’re not as careful about formatting our code.\n\nsd &lt;- sqrt(diag(cov(bfi[c(\"agree\", \"consc\", \"extra\", \"neuro\", \"open\")],\n  use = \"pairwise\")))\nsd\n\n    agree     consc     extra     neuro      open \n0.8984019 0.9513469 1.0609041 1.1963314 0.8083739 \n\n\nTo make things clearer, we could break the analysis into several steps and save the intermediate results as a temporary object that we repeatedly overwrite.\n\ntmp &lt;- bfi[c(\"agree\", \"consc\", \"extra\", \"neuro\", \"open\")]\ntmp &lt;- cov(tmp, use = \"pairwise\")\ntmp &lt;- diag(tmp)\nsd &lt;- sqrt(tmp)\nsd\n\n    agree     consc     extra     neuro      open \n0.8984019 0.9513469 1.0609041 1.1963314 0.8083739 \n\n\nThis approach is clearer than using deeply nested functions, but we still have notable problems. The repeated assignments increase the opportunities for typos and bugs. For example, consider a situation where we ran the following code earlier in our analysis.\n\ntmp &lt;- bfi[ , 1:5]\n\nThen we tried to execute our focal calculation using the temporary object approach, but we made a small typo.\n\nTmp &lt;- bfi[c(\"agree\", \"consc\", \"extra\", \"neuro\", \"open\")]\ntmp &lt;- cov(tmp, use = \"pairwise\")\ntmp &lt;- diag(tmp)\nsd2 &lt;- sqrt(tmp)\nsd2\n\n      a1       a2       a3       a4       a5 \n1.407737 1.172020 1.301834 1.479633 1.258512 \n\n\nNow, our vector contains the standard deviations of the five raw agreeableness items, not the intended scale scores. However, our results is still a length-five numeric vector, so we could easily miss our mistake and use the wrong vector in subsequent operations. For example, if we were intending to use these standard deviations to standardize the personality scores, R would be happy to use either version.\n\n# Standardize using the correct SDs:\nzDat1 &lt;- scale(bfi[c(\"agree\", \"consc\", \"extra\", \"neuro\", \"open\")], scale = sd)\n\n# Standardize using the wrong SDs:\nzDat2 &lt;- scale(bfi[c(\"agree\", \"consc\", \"extra\", \"neuro\", \"open\")], scale = sd2)\n\n# Obviously, we get very different results:\nhead(zDat1 - zDat2, 10)\n\n           agree       consc        extra        neuro        open\n61617 -0.2626168 -0.29008810 -0.060198053 -0.057979301 -0.70203221\n61618 -0.1820713 -0.05259196  0.149135917  0.102066091 -0.25956996\n61620 -0.3431624 -0.05259196  0.009579937  0.070057012  0.09439985\n61621 -0.0209802 -0.25050541 -0.095087048 -0.057979301 -0.61353976\n61622 -0.2626168  0.02657341  0.114246922  0.006038856 -0.43655486\n61623 -0.0209802  0.26406955  0.253802902 -0.025970223  0.18289230\n61624 -0.0209802  0.02657341  0.009579937 -0.282042850  0.35987720\n61629 -0.8264357 -0.17134003 -0.304421019  0.166084247 -0.17107750\n61630 -0.4237079 -0.05259196 -0.156142790  0.070057012  0.18289230\n61633  0.3012020  0.26406955  0.114246922  0.166084247  0.27138475\n\n\nThis type of error can be difficult to catch in real-world projects, and R won’t do anything to warn you. So, we want to minimize our opportunities for such mistakes, and pipes are a great way to do just that. Using a pipe, we can express the same sequence of calculations in a single expression with a clear, logical structure.\n\nsd &lt;- bfi |&gt;\n  select(agree, consc, extra, neuro, open) |&gt;\n  cov(use = \"pairwise\") |&gt;\n  diag() |&gt;\n  sqrt()\n\nWhen we compose multiple function call using pipes, we call the resulting command a pipeline. Such pipelines solve both the issues noted above.\n\nIt’s easy to understand the sequence of calculations, because we can read off the analytic steps from left-to-right, top-to-bottom (just as you’d read text written in a European language, for example).\nWe do not need to make any temporary assignments, so we minimize our chances of typo-induced bugs.\n\nIn practice, pipes are most useful for implementing sequences of complex data processing steps. For example, suppose we want to apply the following data processing steps to the bfi data.\n\nCenter the variable age on 18.\nCreate mean scores for extraversion and neuroticism.\nKeep only participants aged 18 or older.\nSelect only the scale scores and demographic variables.\nSort the data by extraversion in ascending order.\n\nUsing pipes and dplyr functions, we can write:\n\ntmp1 &lt;- bfi %&gt;%\n  mutate(age = age - 18,\n         extra = rowMeans(across(matches(\"^e\\\\d$\")), na.rm = TRUE),\n         neuro = rowMeans(across(matches(\"^n\\\\d$\")), na.rm = TRUE)) |&gt;\n  filter(age &gt;= 0) |&gt;\n  select(extra, neuro, age, gen, ed, gm) |&gt;\n  arrange(extra)\n\nhead(tmp1, 20)\n\n   extra neuro age    gen ed    gm\n1    1.0   1.0   5   male  3   man\n2    1.0   1.0   1   male  3   man\n3    1.6   3.2   0 female  3 woman\n4    1.8   4.0  18 female  2 woman\n5    2.0   6.0  32 female  3 woman\n6    2.2   4.4   5 female  3 woman\n7    2.2   4.6  22   male NA   man\n8    2.2   4.0  17 female  3 woman\n9    2.2   2.6  22 female  3 woman\n10   2.2   4.2   9 female  5 woman\n11   2.2   3.8  36 female  4 woman\n12   2.2   2.8  11 female  3 woman\n13   2.2   6.0   9 female  3 woman\n14   2.2   1.2   3 female  3 woman\n15   2.2   4.2  20 female  3 woman\n16   2.2   1.4  32 female  4 woman\n17   2.4   2.0  50   male  5   man\n18   2.4   3.6   3   male  4   man\n19   2.4   2.8  36 female  3 woman\n20   2.4   1.0   0 female  1 woman\n\n\nWhen we implement these computations as a pipeline, each step is explicit, readable, and self-contained: it’s as clear as possible what happens and in what order. The same data processing written without pipes would be much harder to follow:\n\ntmp2 &lt;- bfi\ntmp2$age   &lt;- tmp2$age - 18\ntmp2$extra &lt;- rowMeans(tmp2[grep(\"^e\\\\d$\", colnames(tmp2))], na.rm = TRUE)\ntmp2$neuro &lt;- rowMeans(tmp2[grep(\"^n\\\\d$\", colnames(tmp2))], na.rm = TRUE)\ntmp2 &lt;- tmp2[tmp2$age &gt;= 0, c(\"extra\", \"neuro\", \"age\", \"gen\", \"ed\", \"gm\")]\ntmp2 &lt;- tmp2[order(tmp2$extra), ]\n\nhead(tmp2, 20)\n\n      extra neuro age    gen ed    gm\n64642   1.0   1.0   5   male  3   man\n65974   1.0   1.0   1   male  3   man\n66676   1.6   3.2   0 female  3 woman\n62336   1.8   4.0  18 female  2 woman\n65392   2.0   6.0  32 female  3 woman\n63026   2.2   4.4   5 female  3 woman\n63324   2.2   4.6  22   male NA   man\n63668   2.2   4.0  17 female  3 woman\n64050   2.2   2.6  22 female  3 woman\n64158   2.2   4.2   9 female  5 woman\n64621   2.2   3.8  36 female  4 woman\n64724   2.2   2.8  11 female  3 woman\n64753   2.2   6.0   9 female  3 woman\n66440   2.2   1.2   3 female  3 woman\n67357   2.2   4.2  20 female  3 woman\n67560   2.2   1.4  32 female  4 woman\n61661   2.4   2.0  50   male  5   man\n61761   2.4   3.6   3   male  4   man\n61782   2.4   2.8  36 female  3 woman\n63027   2.4   1.0   0 female  1 woman\n\nall.equal(tmp1, tmp2, check.attributes = FALSE)\n\n[1] TRUE\n\n\nBoth approaches produce the same result, but the pipeline is far clearer.\n\n\n\n Back to top",
+    "crumbs": [
+      "Open-Stat-Prog",
+      "Motivation"
+    ]
+  }
+]
