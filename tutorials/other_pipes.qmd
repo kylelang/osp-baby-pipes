@@ -1,69 +1,139 @@
 ---
-title: "Different Pipe Operators in R"
+title: "Different Pipe Operators"
 ---
 
-```{r, echo=FALSE}
-data("bfi", package = "psychTools")
-library(magrittr) # load magrittr package
-library(dplyr) # load dplyr package
-library(psych) # load psych package
+```{r, echo = FALSE}
+library(magrittr)
+library(dplyr)
+library(psych)
+
+data(bfi)
 names(bfi.keys) <- c("agree", "consc", "extra", "neuro", "open")
 tmp <- scoreItems(keys = bfi.keys, items = bfi, impute = "none")
-bfi <- data.frame(bfi, as.data.frame(tmp$scores)) %>%
-     mutate(
-        gender = factor(gender, labels = c("male", "female")),
-        agree_z = (agree - mean(agree, na.rm = TRUE)) / sd(agree, na.rm = TRUE),
-        consc_z = (consc - mean(consc, na.rm = TRUE)) / sd(consc, na.rm = TRUE),
-        extra_z = (extra - mean(extra, na.rm = TRUE)) / sd(extra, na.rm = TRUE),
-        neuro_z = (neuro - mean(neuro, na.rm = TRUE)) / sd(neuro, na.rm = TRUE),
-        open_z  = (open  - mean(open,  na.rm = TRUE)) / sd(open,  na.rm = TRUE),
-        gm = case_when(
-                  age < 18 & gender == "male"   ~ "boy",
-                  age < 18 & gender == "female" ~ "girl",
-                  age >= 18 & gender == "male"  ~ "man",
-                  age >= 18 & gender == "female"~ "woman",
-                  TRUE ~ NA_character_),
-        gm = as.factor(gm),
-        ) %>%
-        rename(ed = education,
-               gen = gender) %>%
-        rename_with(.fn = tolower, .cols = matches("\\d$"))
+
+bfi <- data.frame(bfi, tmp$scores) |>
+  mutate(gender = factor(gender, labels = c("male", "female"))) |>
+  rename_with(.fn = tolower, .cols = matches("\\d$"))
 ```
 
+## The **dplyr** Pipe, `%>%`
 
-### The Exposition Pipe `%$%`
+R's native pipe operator, `|>`, was only introduced in R 4.1. Before that, we used the analagous operator provided by
+the **dplyr** package, `%>%`. The **dplyr** pipe is almost exactly the same as the base R version. For example, we can
+re-create our first motivating example as follows.
 
-The exposition pipe (`%$%`), also from the `magrittr` package, behaves slightly differently. Instead of passing a dataset as an argument, it exposes the variable names of a data frame directly to the next function.
+```{r}
+library(dplyr)
 
-For example, we can write:
+bfi[c("agree", "consc", "extra", "neuro", "open")] %>%
+  cov(use = "pairwise") %>%
+  diag() %>%
+  sqrt()
+```
+
+There are a few minor differences between `|>` and `%>%`. 
+
+1. The **dplyr** pipe uses the `.` character as the dataset placeholder symbol.
+
+```{r}
+mtcars %>%
+  lm(mpg ~ hp + disp, data = .) %>%
+  summary()
+```
+
+1. The **dplyr** pipe allows more flexible usage of the dataset placeholder symbol.
+
+```{r}
+mtcars %>%
+  lm(mpg ~ hp + disp, data = ., weights = .$wt) %>%
+  summary()
+```
+
+```{r, error = TRUE
+mtcars |>
+  lm(mpg ~ hp + disp, data = _, weights = _$wt) |>
+  summary()
+```
+
+## The Exposition Pipe, `%$%`
+
+The exposition pipe, `%$%`, is a very useful flavor or pipe operator provided by the **magrittr** package. The
+exposition pipe offers an elegent alternative to the dataset placeholder symbol in many common types of pipeline. Most
+notably, pipelines involving functions that employ the so-called *formula interface*, such as `lm()`, `t.test()`, or
+`boxplot()`.
+
+Instead of passing a the processed dataset into the first argument of a downstream function, the exposition pipe
+*exposes* the column names of the processed data frame to the downstream function. For example, the following code uses
+the exposition pipe to regress `age` on `extra` in the `bfi` data.
 
 ```{r}
 bfi %$% lm(extra ~ age)
 ```
 
-This works because `%$%` allows the variables extra and age to be used as if they were objects in the global environment, even though they come from within `bfi`. In practice this means that what we just did is equivalent to:
+The exposition pipe allows the `lm()` call to access the colum names of `bfi` when resovling the model formula `extra ~
+age`. We can achieve analagous results in several ways.
 
 ```{r}
+## Explicitly regress two vectors:
 lm(bfi$extra ~ bfi$age)
+
+## Use the Base R equivelant of %$%:
+with(bfi, lm(extra ~ age))
+
+## Use a dataset placeholder symbol:
+bfi |> lm(extra ~ age, data = _)
 ```
 
+## The Assignment Pipe, `%<>%`
 
-### The Base R Pipe `|>`
+The final type of pipe that we'll cover is certainly a niche tool, but it provides a nice little bit of syntatic sugar.
+We only care about assignment pipes in particular types of pipelines. Names, pipelines with two characteristics:
 
-As of R 4.1, there’s also a native pipe operator: `|>`.
-It works like `%>%` but is simpler and doesn’t require loading `dplyr` or `magrittr`.
+1. The pipeline modifies a dataset
+1. The pipeline overwrites the original dataset with the modified version
 
-You can re-create the first example using only base R syntax:
+For example, the following pipeline uses **dplyr** data manipulation functions to modify the `bfi1` dataset and
+overwrite the original with the modified version produced by the pipeline.
 
 ```{r}
-bfi[c("agree", "consc", "extra", "neuro", "open")] |>
-  cov(use = "pairwise") |>
-  diag() |>
-  sqrt()
+bfi1 <- bfi
+head(bfi1)
+
+bfi1 <- bfi1 %>%
+  filter(gender == "female") %>%
+  select(-matches("\\d$"))
+
+head(bfi1)
 ```
 
-The base pipe is great for lightweight pipelines, while the `%>%` pipe remains preferred for more complex workflows, especially those using tidyverse functions like `mutate()`, `filter()`, and `select()`.
+The assignment pipe cleans up the syntax a little but and makes the destructive nature of the pipeline clear. When you
+see an assignment pipe, you know that the modified data produced by the pipeline will replace the original dataset.
 
+```{r}
+bfi1 <- bfi
+head(bfi1)
+
+bfi1 %<>%
+  filter(gender == "female") %>%
+  select(-matches("\\d$"))
+
+head(bfi1)
+```
+
+Note that we must use the **dplyr** pipe, `%>%`, if we include an assignment pipe in our pipeline. The Base R pipe
+doesn't play nicely with the assignment pipe. More specifically, the assignment pipe behaves like a basic pipe (i.e.,
+`|>` or `%>%`) when combined with the Base R pipe operator, as you can see below.
+
+```{r}
+bfi1 <- bfi
+head(bfi1)
+
+bfi1 %<>%
+  filter(gender == "female") |>
+  select(-matches("\\d$"))
+
+head(bfi1)
+```
 
 ```{webr-r}
 #| autorun: true

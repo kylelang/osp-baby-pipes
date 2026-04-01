@@ -3,30 +3,16 @@ title: "Usage"
 ---
 
 ```{r, echo = FALSE}
-data("bfi", package = "psychTools")
-library(dplyr) # load dplyr package
-library(psych) # load psych package
+library(dplyr)
+library(psych)
+
 names(bfi.keys) <- c("agree", "consc", "extra", "neuro", "open")
+
 tmp <- scoreItems(keys = bfi.keys, items = bfi, impute = "none")
-bfi <- data.frame(bfi, as.data.frame(tmp$scores)) %>%
-     mutate(
-        gender = factor(gender, labels = c("male", "female")),
-        agree_z = (agree - mean(agree, na.rm = TRUE)) / sd(agree, na.rm = TRUE),
-        consc_z = (consc - mean(consc, na.rm = TRUE)) / sd(consc, na.rm = TRUE),
-        extra_z = (extra - mean(extra, na.rm = TRUE)) / sd(extra, na.rm = TRUE),
-        neuro_z = (neuro - mean(neuro, na.rm = TRUE)) / sd(neuro, na.rm = TRUE),
-        open_z  = (open  - mean(open,  na.rm = TRUE)) / sd(open,  na.rm = TRUE),
-        gm = case_when(
-                  age < 18 & gender == "male"   ~ "boy",
-                  age < 18 & gender == "female" ~ "girl",
-                  age >= 18 & gender == "male"  ~ "man",
-                  age >= 18 & gender == "female"~ "woman",
-                  TRUE ~ NA_character_),
-        gm = as.factor(gm),
-        ) %>%
-        rename(ed = education,
-               gen = gender) %>%
-        rename_with(.fn = tolower, .cols = matches("\\d$"))
+
+bfi <- data.frame(bfi, as.data.frame(tmp$scores)) |>
+  mutate(gender = factor(gender, labels = c("male", "female"))) |>
+  rename_with(.fn = tolower, .cols = matches("\\d$"))
 ```
 
 ## How Pipes Work
@@ -46,6 +32,48 @@ way. Hence, the following to expressions are also equivalent.
 var(bfi$a1, na.rm = TRUE)
 bfi$a1 |> var(na.rm = TRUE)
 ```
+
+::: practice
+
+Create a pipeline to complete the following operations in one expression.
+
+1. Create a random sample of $N = 1000$ normally distributed values with:
+   - Mean $\mu = 10$
+   - SD $\sigma = 5$
+1. Compute the range of your sample.
+    - I.e., the difference between the largest and smallest value.
+1. Check if the range of your sample is at least 1.5 times the population variance.
+
+Your solution should be a single pipeline that produces a length-one logical vector.
+
+:::: {.panel-tabset}
+
+## {{< var tab_title.editor >}}
+
+```{webr-r}
+```
+
+## {{< var tab_title.hint >}}
+
+You probably want to use the following functions somewhere in your pipeline.
+
+- `rnorm()`
+- `range()`
+- `diff()`
+
+## {{< var tab_title.solution >}}
+
+```{r}
+m <- 10
+s <- 5
+
+rnorm(1000, mean = m, sd = s) |>
+  range() |>
+  diff() > (1.5 * s^2)
+```
+::::
+
+:::
 
 ### What if the dataset isn’t the first argument?
 
@@ -68,7 +96,7 @@ Note that we must name the argument to which we assign `_`. The following won't 
 bfi |> lm(extra ~ age, _)
 ```
 
-This trick makes it possible to use nearly any function in a pipeline, even when the data aren’t the first argument.
+This trick makes it possible to use nearly any function in a pipeline, even when the dataset isn't the first argument.
 
 ```{webr-r}
 #| autorun: true
@@ -118,6 +146,19 @@ Use pipes to perform the following data manipulations on the `bfi` dataset:
 ## {{< var tab_title.solution >}}
 
 ```{r}
+scale(iris)
+scale(bfi)
+
+mtcars |> 
+  scale() |>
+  lm(mpg ~ disp + hp + wt, data = _) |>
+  resid() |>
+  sum() |>
+  sqrt()
+
+?Arithmetic
+
+lm(Petal.Length ~ Petal.Width + Species, data = iris)
 bfi |>
   mutate(age_centered = age - mean(age, na.rm = TRUE)) |>
   filter(age > 25) |>
@@ -127,7 +168,6 @@ bfi |>
 ::::
 
 :::
-
 
 ```{webr-r}
 #| autorun: true
@@ -158,7 +198,6 @@ bfi <- data.frame(bfi, as.data.frame(tmp$scores)) %>%
                gen = gender) %>%
         rename_with(.fn = tolower, .cols = matches("\\d$"))
 ```
-
 
 ::: practice
 

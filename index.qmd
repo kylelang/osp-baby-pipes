@@ -30,5 +30,5 @@ Click the button below to get started with the first tutorial.
 ```{r}
 #| echo: false
 #| results: asis
-begin_button("/tutorials/index.html")
+begin_button("/tutorials/motivation.html")
 ```
