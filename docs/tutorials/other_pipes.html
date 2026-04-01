@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Different Pipe Operators in R – OSP Pipes</title>
+<title>Different Pipe Operators – OSP Pipes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -404,7 +404,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"id":1,"options":{"read-only":"false","context":"setup","fig-height":5,"warning":"true","dpi":72,"label":"unnamed-chunk-1","editor-quick-suggestions":"false","editor-font-scale":"1","autorun":"true","comment":"","results":"markup","fig-width":7,"output":"true","message":"true","fig-cap":"","editor-max-height":"","out-width":"700px","out-height":"","classes":"","editor-word-wrap":"true"},"code":"library(psychTools)\ndata(\"bfi\", package = \"psychTools\")\nlibrary(dplyr) # load dplyr package\nlibrary(psych) # load psych package\nnames(bfi.keys) <- c(\"agree\", \"consc\", \"extra\", \"neuro\", \"open\")\ntmp <- scoreItems(keys = bfi.keys, items = bfi, impute = \"none\")\nbfi <- data.frame(bfi, as.data.frame(tmp$scores)) %>%\n     mutate(\n        gender = factor(gender, labels = c(\"male\", \"female\")),\n        agree_z = (agree - mean(agree, na.rm = TRUE)) / sd(agree, na.rm = TRUE),\n        consc_z = (consc - mean(consc, na.rm = TRUE)) / sd(consc, na.rm = TRUE),\n        extra_z = (extra - mean(extra, na.rm = TRUE)) / sd(extra, na.rm = TRUE),\n        neuro_z = (neuro - mean(neuro, na.rm = TRUE)) / sd(neuro, na.rm = TRUE),\n        open_z  = (open  - mean(open,  na.rm = TRUE)) / sd(open,  na.rm = TRUE),\n        gm = case_when(\n                  age < 18 & gender == \"male\"   ~ \"boy\",\n                  age < 18 & gender == \"female\" ~ \"girl\",\n                  age >= 18 & gender == \"male\"  ~ \"man\",\n                  age >= 18 & gender == \"female\"~ \"woman\",\n                  TRUE ~ NA_character_),\n        gm = as.factor(gm),\n        ) %>%\n        rename(ed = education,\n               gen = gender) %>%\n        rename_with(.fn = tolower, .cols = matches(\"\\\\d$\"))"},{"id":2,"options":{"read-only":"false","context":"interactive","fig-height":5,"warning":"true","dpi":72,"label":"unnamed-chunk-2","editor-quick-suggestions":"false","editor-font-scale":"1","autorun":"false","comment":"","results":"markup","fig-width":7,"output":"true","message":"true","fig-cap":"","editor-max-height":"","out-width":"700px","out-height":"","classes":"","editor-word-wrap":"true"},"code":""}];
+globalThis.qwebrCellDetails = [{"id":1,"code":"data(bfi)\n\nnames(bfi.keys) <- c(\"agree\", \"consc\", \"extra\", \"neuro\", \"open\")\ntmp <- scoreItems(keys = bfi.keys, items = bfi, impute = \"none\")\n\nbfi <- data.frame(bfi, tmp$scores) |>\n  mutate(gender = factor(gender, labels = c(\"male\", \"female\"))) |>\n  rename_with(.fn = tolower, .cols = matches(\"\\\\d$\"))","options":{"editor-max-height":"","label":"unnamed-chunk-1","context":"setup","editor-font-scale":"1","message":"true","fig-height":5,"fig-width":7,"results":"markup","fig-cap":"","autorun":"true","classes":"","dpi":72,"warning":"true","comment":"","editor-quick-suggestions":"false","output":"true","editor-word-wrap":"true","read-only":"false","out-height":"","out-width":"700px"}},{"id":2,"code":"","options":{"editor-max-height":"","label":"unnamed-chunk-2","context":"interactive","editor-font-scale":"1","message":"true","fig-height":5,"fig-width":7,"results":"markup","fig-cap":"","autorun":"false","classes":"","dpi":72,"warning":"true","comment":"","editor-quick-suggestions":"false","output":"true","editor-word-wrap":"true","read-only":"false","out-height":"","out-width":"700px"}},{"id":3,"code":"","options":{"editor-max-height":"","label":"unnamed-chunk-3","context":"interactive","editor-font-scale":"1","message":"true","fig-height":5,"fig-width":7,"results":"markup","fig-cap":"","autorun":"false","classes":"","dpi":72,"warning":"true","comment":"","editor-quick-suggestions":"false","output":"true","editor-word-wrap":"true","read-only":"false","out-height":"","out-width":"700px"}},{"id":4,"code":"","options":{"editor-max-height":"","label":"unnamed-chunk-4","context":"interactive","editor-font-scale":"1","message":"true","fig-height":5,"fig-width":7,"results":"markup","fig-cap":"","autorun":"false","classes":"","dpi":72,"warning":"true","comment":"","editor-quick-suggestions":"false","output":"true","editor-word-wrap":"true","read-only":"false","out-height":"","out-width":"700px"}}];
 
 </script>
 <script type="module">
@@ -1671,19 +1671,6 @@ div.callout-reading.callout-style-default .callout-icon::before, div.callout-rea
   content: '\f518' !important;
   background-image: none;
 }
-div.callout-resource.callout {
-  border-left-color: orange;
-}
-div.callout-resource.callout-style-default > .callout-header {
-  background-color: rgb(from orange r g b / 13%);
-}
-div.callout-resource .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
-div.callout-resource.callout-style-default .callout-icon::before, div.callout-resource.callout-titled .callout-icon::before {
-  font-family: 'Font Awesome 6 Free', FontAwesome;
-  font-style: normal;
-  content: '\f0c1' !important;
-  background-image: none;
-}
 div.callout-practice.callout {
   border-left-color: green;
 }
@@ -1695,6 +1682,19 @@ div.callout-practice.callout-style-default .callout-icon::before, div.callout-pr
   font-family: 'Font Awesome 6 Free', FontAwesome;
   font-style: normal;
   content: '\f085' !important;
+  background-image: none;
+}
+div.callout-resource.callout {
+  border-left-color: orange;
+}
+div.callout-resource.callout-style-default > .callout-header {
+  background-color: rgb(from orange r g b / 13%);
+}
+div.callout-resource .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
+div.callout-resource.callout-style-default .callout-icon::before, div.callout-resource.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f0c1' !important;
   background-image: none;
 }
 div.callout-reading-advanced.callout {
@@ -1712,6 +1712,35 @@ div.callout-reading-advanced.callout-style-default .callout-icon::before, div.ca
 }
 </style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../html/webex.css">
 </head>
@@ -1733,7 +1762,7 @@ div.callout-reading-advanced.callout-style-default .callout-icon::before, div.ca
 <span class="menu-text">Open-Stat-Prog</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../index.html" aria-current="page"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Pipes</span></a>
   </li>  
 </ul>
@@ -1762,7 +1791,7 @@ div.callout-reading-advanced.callout-style-default .callout-icon::before, div.ca
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/other_pipes.html">Different Pipe Operators in R</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/other_pipes.html">Different Pipe Operators</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -1774,12 +1803,6 @@ div.callout-reading-advanced.callout-style-default .callout-icon::before, div.ca
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Overview</span></a>
-  </div>
-</li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/motivation.html" class="sidebar-item-text sidebar-link">
@@ -1795,7 +1818,7 @@ div.callout-reading-advanced.callout-style-default .callout-icon::before, div.ca
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/other_pipes.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Different Pipe Operators in R</span></a>
+ <span class="menu-text">Different Pipe Operators</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -1820,8 +1843,9 @@ div.callout-reading-advanced.callout-style-default .callout-icon::before, div.ca
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#the-exposition-pipe" id="toc-the-exposition-pipe" class="nav-link active" data-scroll-target="#the-exposition-pipe">The Exposition Pipe <code>%$%</code></a></li>
-  <li><a href="#the-base-r-pipe" id="toc-the-base-r-pipe" class="nav-link" data-scroll-target="#the-base-r-pipe">The Base R Pipe <code>|&gt;</code></a></li>
+  <li><a href="#the-dplyr-pipe" id="toc-the-dplyr-pipe" class="nav-link active" data-scroll-target="#the-dplyr-pipe">The <strong>dplyr</strong> Pipe: <code>%&gt;%</code></a></li>
+  <li><a href="#the-exposition-pipe" id="toc-the-exposition-pipe" class="nav-link" data-scroll-target="#the-exposition-pipe">The Exposition Pipe: <code>%$%</code></a></li>
+  <li><a href="#the-assignment-pipe" id="toc-the-assignment-pipe" class="nav-link" data-scroll-target="#the-assignment-pipe">The Assignment Pipe: <code>%&lt;&gt;%</code></a></li>
   </ul>
 </nav>
     </div>
@@ -2114,7 +2138,7 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Different Pipe Operators in R</h1>
+<h1 class="title">Different Pipe Operators</h1>
 </div>
 
 
@@ -2131,53 +2155,138 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </header>
 
 
-<section id="the-exposition-pipe" class="level3">
-<h3 class="anchored" data-anchor-id="the-exposition-pipe">The Exposition Pipe <code>%$%</code></h3>
-<p>The exposition pipe (<code>%$%</code>), also from the <code>magrittr</code> package, behaves slightly differently. Instead of passing a dataset as an argument, it exposes the variable names of a data frame directly to the next function.</p>
-<p>For example, we can write:</p>
+<section id="the-dplyr-pipe" class="level2">
+<h2 class="anchored" data-anchor-id="the-dplyr-pipe">The <strong>dplyr</strong> Pipe: <code>%&gt;%</code></h2>
+<p>R’s native pipe operator, <code>|&gt;</code>, was only introduced in R 4.1. Before that, we used the analogous operator provided by the <strong>dplyr</strong> package, <code>%&gt;%</code>. The <strong>dplyr</strong> pipe is almost exactly the same as the base R version. For example, we can re-create our first motivating example as follows.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>bfi <span class="sc">%$%</span> <span class="fu">lm</span>(extra <span class="sc">~</span> age)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = extra ~ age)
-
-Coefficients:
-(Intercept)          age  
-    3.97269      0.00599  </code></pre>
-</div>
-</div>
-<p>This works because <code>%$%</code> allows the variables extra and age to be used as if they were objects in the global environment, even though they come from within <code>bfi</code>. In practice this means that what we just did is equivalent to:</p>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(bfi<span class="sc">$</span>extra <span class="sc">~</span> bfi<span class="sc">$</span>age)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = bfi$extra ~ bfi$age)
-
-Coefficients:
-(Intercept)      bfi$age  
-    3.97269      0.00599  </code></pre>
-</div>
-</div>
-</section>
-<section id="the-base-r-pipe" class="level3">
-<h3 class="anchored" data-anchor-id="the-base-r-pipe">The Base R Pipe <code>|&gt;</code></h3>
-<p>As of R 4.1, there’s also a native pipe operator: <code>|&gt;</code>. It works like <code>%&gt;%</code> but is simpler and doesn’t require loading <code>dplyr</code> or <code>magrittr</code>.</p>
-<p>You can re-create the first example using only base R syntax:</p>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>bfi[<span class="fu">c</span>(<span class="st">"agree"</span>, <span class="st">"consc"</span>, <span class="st">"extra"</span>, <span class="st">"neuro"</span>, <span class="st">"open"</span>)] <span class="sc">|&gt;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cov</span>(<span class="at">use =</span> <span class="st">"pairwise"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">diag</span>() <span class="sc">|&gt;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sqrt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>bfi[<span class="fu">c</span>(<span class="st">"agree"</span>, <span class="st">"consc"</span>, <span class="st">"extra"</span>, <span class="st">"neuro"</span>, <span class="st">"open"</span>)] <span class="sc">%&gt;%</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cov</span>(<span class="at">use =</span> <span class="st">"pairwise"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">diag</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sqrt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    agree     consc     extra     neuro      open 
 0.8984019 0.9513469 1.0609041 1.1963314 0.8083739 </code></pre>
 </div>
 </div>
-<p>The base pipe is great for lightweight pipelines, while the <code>%&gt;%</code> pipe remains preferred for more complex workflows, especially those using tidyverse functions like <code>mutate()</code>, <code>filter()</code>, and <code>select()</code>.</p>
-<div id="qwebr-insertion-location-1"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>For most practical purposes, the Base R and <strong>dplyr</strong> pipes are interchangeable, but there are a few minor differences between <code>|&gt;</code> and <code>%&gt;%</code>. For example, the <strong>dplyr</strong> pipe uses the <code>.</code> character as the dataset placeholder symbol.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(mpg <span class="sc">~</span> hp <span class="sc">+</span> disp, <span class="at">data =</span> .) <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = mpg ~ hp + disp, data = .)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.7945 -2.3036 -0.8246  1.8582  6.9363 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 30.735904   1.331566  23.083  &lt; 2e-16 ***
+hp          -0.024840   0.013385  -1.856 0.073679 .  
+disp        -0.030346   0.007405  -4.098 0.000306 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.127 on 29 degrees of freedom
+Multiple R-squared:  0.7482,    Adjusted R-squared:  0.7309 
+F-statistic: 43.09 on 2 and 29 DF,  p-value: 2.062e-09</code></pre>
+</div>
+</div>
+<p>The <strong>dplyr</strong> pipe also allows more flexible usage of the dataset placeholder symbol.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(mpg <span class="sc">~</span> hp <span class="sc">+</span> disp, <span class="at">data =</span> ., <span class="at">weights =</span> .<span class="sc">$</span>wt) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = mpg ~ hp + disp, data = ., weights = .$wt)
+
+Weighted Residuals:
+   Min     1Q Median     3Q    Max 
+-7.873 -3.313 -1.434  3.071 10.635 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 29.510142   1.329831  22.191  &lt; 2e-16 ***
+hp          -0.022962   0.011752  -1.954 0.060426 .  
+disp        -0.027690   0.006297  -4.398 0.000135 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 5.114 on 29 degrees of freedom
+Multiple R-squared:  0.7511,    Adjusted R-squared:  0.7339 
+F-statistic: 43.75 on 2 and 29 DF,  p-value: 1.749e-09</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(mpg <span class="sc">~</span> hp <span class="sc">+</span> disp, <span class="at">data =</span> _, <span class="at">weights =</span> _<span class="sc">$</span>wt) <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>Error in summary(lm(mpg ~ hp + disp, data = mtcars, weights = "_"$wt)): invalid use of pipe placeholder (&lt;input&gt;:3:0)</code></pre>
+</div>
+</div>
+</section>
+<section id="the-exposition-pipe" class="level2">
+<h2 class="anchored" data-anchor-id="the-exposition-pipe">The Exposition Pipe: <code>%$%</code></h2>
+<p>The exposition pipe, <code>%$%</code>, is a very useful flavor or pipe operator provided by the <strong>magrittr</strong> package. The exposition pipe offers an elegant alternative to the dataset placeholder symbol in many common types of pipeline. Most notably, pipelines involving functions that employ the so-called <em>formula interface</em>, such as <code>lm()</code>, <code>t.test()</code>, or <code>boxplot()</code>.</p>
+<p>Instead of passing the processed dataset into the first argument of a downstream function, the exposition pipe <em>exposes</em> the column names of the processed data frame to the downstream function. For example, the following code uses the exposition pipe to regress <code>age</code> on <code>extra</code> in the <code>bfi</code> data.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>bfi <span class="sc">%$%</span> <span class="fu">lm</span>(extra <span class="sc">~</span> age <span class="sc">+</span> open)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = extra ~ age + open)
+
+Coefficients:
+(Intercept)          age         open  
+   2.752007     0.004406     0.276073  </code></pre>
+</div>
+</div>
+<p>The exposition pipe allows the <code>lm()</code> call to access the column names of <code>bfi</code> when resolving the model formula <code>extra ~ age</code>. We can achieve analogous results in several ways.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Explicitly regress vectors:</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(bfi<span class="sc">$</span>extra <span class="sc">~</span> bfi<span class="sc">$</span>age <span class="sc">+</span> bfi<span class="sc">$</span>open)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = bfi$extra ~ bfi$age + bfi$open)
+
+Coefficients:
+(Intercept)      bfi$age     bfi$open  
+   2.752007     0.004406     0.276073  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Use the Base R equivalent of %$%:</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(bfi, <span class="fu">lm</span>(extra <span class="sc">~</span> age <span class="sc">+</span> open))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = extra ~ age + open)
+
+Coefficients:
+(Intercept)          age         open  
+   2.752007     0.004406     0.276073  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Use a dataset placeholder symbol:</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>bfi <span class="sc">|&gt;</span> <span class="fu">lm</span>(extra <span class="sc">~</span> age <span class="sc">+</span> open, <span class="at">data =</span> _)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = extra ~ age + open, data = bfi)
+
+Coefficients:
+(Intercept)          age         open  
+   2.752007     0.004406     0.276073  </code></pre>
+</div>
+</div>
 <div class="callout callout-style-default callout-practice callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -2188,25 +2297,230 @@ Practice
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Use the pipe and exposition pipe to calculate the correlation between <code>age</code> and <code>agree</code> for adults in the <code>bfi</code> data.</p>
+<div id="qwebr-insertion-location-1"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Use the <code>bfi</code> dataset and an exposition pipe to create a pipeline to draw a conditional boxplot that visualizes the distribution of <code>agree</code> scores within <code>gender</code> groups.</p>
+<ul>
+<li>Use the Base R <code>boxplot()</code> function to draw the plot.</li>
+</ul>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true"><i class="fa-solid fa-code" aria-label="code"></i> Interactive Editor</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false"><i class="fa-solid fa-lightbulb" aria-label="lightbulb"></i> Hint</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false"><i class="fa-solid fa-circle-check" aria-label="circle-check"></i> Solution</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true"><i class="fa-solid fa-code" aria-label="code"></i> Interactive Editor</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false"><i class="fa-solid fa-circle-check" aria-label="circle-check"></i> Solution</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-<p>You can use the <code>cor()</code> function to compute the correlation between two variables.</p>
-</div>
-<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>bfi <span class="sc">%&gt;%</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(age <span class="sc">&gt;=</span> <span class="dv">18</span>) <span class="sc">%$%</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>(age, agree)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.1546906</code></pre>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>bfi <span class="sc">%$%</span> <span class="fu">boxplot</span>(agree <span class="sc">~</span> gender)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="other_pipes_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
 </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-practice callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Practice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Create a pipeline that includes at least on exposition pipe to perform the following operations with the <code>bfi</code> dataset:</p>
+<ol type="1">
+<li>Randomly sample <span class="math inline">\(N = 500\)</span> rows.
+<ul>
+<li>Use <code>dplyr::slice_sample()</code>.</li>
+</ul></li>
+<li>Use the sampled rows to regress <code>agree</code> onto <code>extra</code>, <code>open</code>, and <code>gender</code>.
+<ul>
+<li>Use <code>lm()</code>.</li>
+</ul></li>
+<li>Extract the residuals from the linear regression model.</li>
+<li>Compute the sum of the absolute values of the residuals.</li>
+</ol>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true"><i class="fa-solid fa-code" aria-label="code"></i> Interactive Editor</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false"><i class="fa-solid fa-circle-check" aria-label="circle-check"></i> Solution</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div id="qwebr-insertion-location-3"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">235711</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>bfi <span class="sc">|&gt;</span> </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">500</span>) <span class="sc">%$%</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(agree <span class="sc">~</span> extra <span class="sc">+</span> open <span class="sc">+</span> gender) <span class="sc">|&gt;</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">resid</span>() <span class="sc">|&gt;</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">abs</span>() <span class="sc">|&gt;</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 318.6229</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-assignment-pipe" class="level2">
+<h2 class="anchored" data-anchor-id="the-assignment-pipe">The Assignment Pipe: <code>%&lt;&gt;%</code></h2>
+<p>The final type of pipe that we’ll cover is certainly a niche tool, but it provides a nice little bit of syntactic sugar. We only care about assignment pipes in particular types of pipelines. Names, pipelines with two characteristics:</p>
+<ol type="1">
+<li>The pipeline modifies a dataset</li>
+<li>The pipeline overwrites the original dataset with the modified version</li>
+</ol>
+<p>For example, the following pipeline uses <strong>dplyr</strong> data manipulation functions to modify the <code>bfi1</code> dataset and overwrite the original with the modified version produced by the pipeline.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>bfi1 <span class="ot">&lt;-</span> bfi</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(bfi1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      a1 a2 a3 a4 a5 c1 c2 c3 c4 c5 e1 e2 e3 e4 e5 n1 n2 n3 n4 n5 o1 o2 o3 o4
+61617  2  4  3  4  4  2  3  3  4  4  3  3  3  4  4  3  4  2  2  3  3  6  3  4
+61618  2  4  5  2  5  5  4  4  3  4  1  1  6  4  3  3  3  3  5  5  4  2  4  3
+61620  5  4  5  4  4  4  5  4  2  5  2  4  4  4  5  4  5  4  2  3  4  2  5  5
+61621  4  4  6  5  5  4  4  3  5  5  5  3  4  4  4  2  5  2  4  1  3  3  4  3
+61622  2  3  3  4  5  4  4  5  3  2  2  2  5  4  5  2  3  4  4  3  3  3  4  3
+61623  6  6  5  6  5  6  6  6  1  3  2  1  6  5  6  3  5  2  2  3  4  3  5  6
+      o5 gender education age agree consc extra neuro open
+61617  3   male        NA  16   4.0   2.8   3.8   2.8  3.0
+61618  3 female        NA  18   4.2   4.0   5.0   3.8  4.0
+61620  2 female        NA  17   3.8   4.0   4.2   3.6  4.8
+61621  5 female        NA  17   4.6   3.0   3.6   2.8  3.2
+61622  3   male        NA  17   4.0   4.4   4.8   3.2  3.6
+61623  1 female         3  21   4.6   5.6   5.6   3.0  5.0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>bfi1 <span class="ot">&lt;-</span> bfi1 <span class="sc">%&gt;%</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">20</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">matches</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">d$"</span>))</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(bfi1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  gender education age agree consc extra neuro open
+1   male         5  38   5.2   5.8   5.2   1.0  4.8
+2   male         3  27   4.2   5.4   3.8   3.0  3.4
+3 female         4  20   5.2   3.8   4.6   3.8  5.2
+4   male         3  40   5.6   5.0   4.6   1.4  4.6
+5   male         3  26   5.0   5.2   3.8   2.2  4.2
+6 female         4  27   5.6   5.0   4.8   1.6  5.0</code></pre>
+</div>
+</div>
+<p>The assignment pipe cleans up the syntax a little but and makes the destructive nature of the pipeline clear. When you see an assignment pipe, you know that the modified data produced by the pipeline will replace the original dataset.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>bfi1 <span class="ot">&lt;-</span> bfi</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(bfi1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      a1 a2 a3 a4 a5 c1 c2 c3 c4 c5 e1 e2 e3 e4 e5 n1 n2 n3 n4 n5 o1 o2 o3 o4
+61617  2  4  3  4  4  2  3  3  4  4  3  3  3  4  4  3  4  2  2  3  3  6  3  4
+61618  2  4  5  2  5  5  4  4  3  4  1  1  6  4  3  3  3  3  5  5  4  2  4  3
+61620  5  4  5  4  4  4  5  4  2  5  2  4  4  4  5  4  5  4  2  3  4  2  5  5
+61621  4  4  6  5  5  4  4  3  5  5  5  3  4  4  4  2  5  2  4  1  3  3  4  3
+61622  2  3  3  4  5  4  4  5  3  2  2  2  5  4  5  2  3  4  4  3  3  3  4  3
+61623  6  6  5  6  5  6  6  6  1  3  2  1  6  5  6  3  5  2  2  3  4  3  5  6
+      o5 gender education age agree consc extra neuro open
+61617  3   male        NA  16   4.0   2.8   3.8   2.8  3.0
+61618  3 female        NA  18   4.2   4.0   5.0   3.8  4.0
+61620  2 female        NA  17   3.8   4.0   4.2   3.6  4.8
+61621  5 female        NA  17   4.6   3.0   3.6   2.8  3.2
+61622  3   male        NA  17   4.0   4.4   4.8   3.2  3.6
+61623  1 female         3  21   4.6   5.6   5.6   3.0  5.0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>bfi1 <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">20</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">matches</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">d$"</span>))</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(bfi1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  gender education age agree consc extra neuro open
+1 female         3  27   5.6   5.6   5.8   2.2  5.8
+2 female         3  51   5.4   5.6   4.2   4.4  4.2
+3   male         2  49   4.0   3.4   4.0   3.0  4.4
+4 female         2  19   3.8   3.8   2.0   3.6  3.8
+5 female         3  27   4.6   5.8   6.0   4.2  5.8
+6 female         3  26   5.0   5.8   4.4   1.0  5.0</code></pre>
+</div>
+</div>
+<p>Note that we must use the <strong>dplyr</strong> pipe, <code>%&gt;%</code>, if we include an assignment pipe in our pipeline. The Base R pipe doesn’t play nicely with the assignment pipe. More specifically, the assignment pipe behaves like a basic pipe (i.e., <code>|&gt;</code> or <code>%&gt;%</code>) when combined with the Base R pipe operator, as you can see below.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>bfi1 <span class="ot">&lt;-</span> bfi</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(bfi1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      a1 a2 a3 a4 a5 c1 c2 c3 c4 c5 e1 e2 e3 e4 e5 n1 n2 n3 n4 n5 o1 o2 o3 o4
+61617  2  4  3  4  4  2  3  3  4  4  3  3  3  4  4  3  4  2  2  3  3  6  3  4
+61618  2  4  5  2  5  5  4  4  3  4  1  1  6  4  3  3  3  3  5  5  4  2  4  3
+61620  5  4  5  4  4  4  5  4  2  5  2  4  4  4  5  4  5  4  2  3  4  2  5  5
+61621  4  4  6  5  5  4  4  3  5  5  5  3  4  4  4  2  5  2  4  1  3  3  4  3
+61622  2  3  3  4  5  4  4  5  3  2  2  2  5  4  5  2  3  4  4  3  3  3  4  3
+61623  6  6  5  6  5  6  6  6  1  3  2  1  6  5  6  3  5  2  2  3  4  3  5  6
+      o5 gender education age agree consc extra neuro open
+61617  3   male        NA  16   4.0   2.8   3.8   2.8  3.0
+61618  3 female        NA  18   4.2   4.0   5.0   3.8  4.0
+61620  2 female        NA  17   3.8   4.0   4.2   3.6  4.8
+61621  5 female        NA  17   4.6   3.0   3.6   2.8  3.2
+61622  3   male        NA  17   4.0   4.4   4.8   3.2  3.6
+61623  1 female         3  21   4.6   5.6   5.6   3.0  5.0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>bfi1 <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">20</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">matches</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">d$"</span>))</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(bfi1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  gender education age agree consc extra neuro open
+1   male         4  30   4.0   3.4   4.2   3.6  4.4
+2 female         2  41   5.4   5.0   5.2   3.6  3.6
+3 female        NA  16   4.6   4.6   2.6   3.6  4.0
+4   male         3  18   3.0   3.2   4.8   1.6  5.4
+5 female         5  25   5.4   2.0   5.6   4.4  5.2
+6 female         3  21   5.0   4.8   4.6   2.6  3.4</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-practice callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Practice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Use the assignment pipe to create a pipeline that implements the following operations:</p>
+<ol type="1">
+<li>Standardize every column in the <code>mtcars</code> dataset.</li>
+<li>Overwrites the original <code>mtcars</code> dataset with the standardized version.</li>
+</ol>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true"><i class="fa-solid fa-code" aria-label="code"></i> Interactive Editor</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false"><i class="fa-solid fa-lightbulb" aria-label="lightbulb"></i> Hint</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false"><i class="fa-solid fa-circle-check" aria-label="circle-check"></i> Solution</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div id="qwebr-insertion-location-4"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<p>You can use the <code>scale()</code> function to standardize variables.</p>
+</div>
+<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&lt;&gt;%</span> <span class="fu">scale</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>

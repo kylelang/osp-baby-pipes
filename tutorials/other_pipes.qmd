@@ -3,7 +3,6 @@ title: "Different Pipe Operators"
 ---
 
 ```{r, echo = FALSE}
-library(magrittr)
 library(dplyr)
 library(psych)
 
@@ -16,9 +15,9 @@ bfi <- data.frame(bfi, tmp$scores) |>
   rename_with(.fn = tolower, .cols = matches("\\d$"))
 ```
 
-## The **dplyr** Pipe, `%>%`
+## The **dplyr** Pipe: `%>%`
 
-R's native pipe operator, `|>`, was only introduced in R 4.1. Before that, we used the analagous operator provided by
+R's native pipe operator, `|>`, was only introduced in R 4.1. Before that, we used the analogous operator provided by
 the **dplyr** package, `%>%`. The **dplyr** pipe is almost exactly the same as the base R version. For example, we can
 re-create our first motivating example as follows.
 
@@ -31,9 +30,8 @@ bfi[c("agree", "consc", "extra", "neuro", "open")] %>%
   sqrt()
 ```
 
-There are a few minor differences between `|>` and `%>%`. 
-
-1. The **dplyr** pipe uses the `.` character as the dataset placeholder symbol.
+For most practical purposes, the Base R and **dplyr** pipes are interchangeable, but there are a few minor differences
+between `|>` and `%>%`. For example, the **dplyr** pipe uses the `.` character as the dataset placeholder symbol.
 
 ```{r}
 mtcars %>%
@@ -41,7 +39,7 @@ mtcars %>%
   summary()
 ```
 
-1. The **dplyr** pipe allows more flexible usage of the dataset placeholder symbol.
+The **dplyr** pipe also allows more flexible usage of the dataset placeholder symbol.
 
 ```{r}
 mtcars %>%
@@ -49,44 +47,122 @@ mtcars %>%
   summary()
 ```
 
-```{r, error = TRUE
+```{r, error = TRUE}
 mtcars |>
   lm(mpg ~ hp + disp, data = _, weights = _$wt) |>
   summary()
 ```
 
-## The Exposition Pipe, `%$%`
+## The Exposition Pipe: `%$%`
 
 The exposition pipe, `%$%`, is a very useful flavor or pipe operator provided by the **magrittr** package. The
-exposition pipe offers an elegent alternative to the dataset placeholder symbol in many common types of pipeline. Most
+exposition pipe offers an elegant alternative to the dataset placeholder symbol in many common types of pipeline. Most
 notably, pipelines involving functions that employ the so-called *formula interface*, such as `lm()`, `t.test()`, or
 `boxplot()`.
 
-Instead of passing a the processed dataset into the first argument of a downstream function, the exposition pipe
-*exposes* the column names of the processed data frame to the downstream function. For example, the following code uses
-the exposition pipe to regress `age` on `extra` in the `bfi` data.
+Instead of passing the processed dataset into the first argument of a downstream function, the exposition pipe *exposes*
+the column names of the processed data frame to the downstream function. For example, the following code uses the
+exposition pipe to regress `age` on `extra` in the `bfi` data.
 
 ```{r}
-bfi %$% lm(extra ~ age)
+library(magrittr)
+
+bfi %$% lm(extra ~ age + open)
 ```
 
-The exposition pipe allows the `lm()` call to access the colum names of `bfi` when resovling the model formula `extra ~
-age`. We can achieve analagous results in several ways.
+The exposition pipe allows the `lm()` call to access the column names of `bfi` when resolving the model formula `extra ~
+age`. We can achieve analogous results in several ways.
 
 ```{r}
-## Explicitly regress two vectors:
-lm(bfi$extra ~ bfi$age)
+## Explicitly regress vectors:
+lm(bfi$extra ~ bfi$age + bfi$open)
 
-## Use the Base R equivelant of %$%:
-with(bfi, lm(extra ~ age))
+## Use the Base R equivalent of %$%:
+with(bfi, lm(extra ~ age + open))
 
 ## Use a dataset placeholder symbol:
-bfi |> lm(extra ~ age, data = _)
+bfi |> lm(extra ~ age + open, data = _)
 ```
 
-## The Assignment Pipe, `%<>%`
+::: practice
 
-The final type of pipe that we'll cover is certainly a niche tool, but it provides a nice little bit of syntatic sugar.
+```{webr-r}
+#| autorun: true
+#| context: setup
+
+data(bfi)
+
+names(bfi.keys) <- c("agree", "consc", "extra", "neuro", "open")
+tmp <- scoreItems(keys = bfi.keys, items = bfi, impute = "none")
+
+bfi <- data.frame(bfi, tmp$scores) |>
+  mutate(gender = factor(gender, labels = c("male", "female"))) |>
+  rename_with(.fn = tolower, .cols = matches("\\d$"))
+```
+
+Use the `bfi` dataset and an exposition pipe to create a pipeline to draw a conditional boxplot that visualizes the
+distribution of `agree` scores within `gender` groups.
+
+- Use the Base R `boxplot()` function to draw the plot.
+
+:::: {.panel-tabset}
+
+## {{< var tab_title.editor >}}
+
+```{webr-r}
+```
+
+## {{< var tab_title.solution >}}
+
+```{r}
+library(magrittr)
+
+bfi %$% boxplot(agree ~ gender)
+```
+
+::::
+
+:::
+
+::: practice
+
+Create a pipeline that includes at least on exposition pipe to perform the following operations with the `bfi` dataset:
+
+1. Randomly sample $N = 500$ rows.
+   - Use `dplyr::slice_sample()`.
+1. Use the sampled rows to regress `agree` onto `extra`, `open`, and `gender`.
+   - Use `lm()`.
+1. Extract the residuals from the linear regression model.
+1. Compute the sum of the absolute values of the residuals.
+
+:::: {.panel-tabset}
+
+## {{< var tab_title.editor >}}
+
+```{webr-r}
+```
+
+## {{< var tab_title.solution >}}
+
+```{r}
+library(dplyr)
+set.seed(235711)
+
+bfi |> 
+  slice_sample(n = 500) %$%
+  lm(agree ~ extra + open + gender) |>
+  resid() |>
+  abs() |>
+  sum()
+```
+
+::::
+
+:::
+
+## The Assignment Pipe: `%<>%`
+
+The final type of pipe that we'll cover is certainly a niche tool, but it provides a nice little bit of syntactic sugar.
 We only care about assignment pipes in particular types of pipelines. Names, pipelines with two characteristics:
 
 1. The pipeline modifies a dataset
@@ -100,7 +176,7 @@ bfi1 <- bfi
 head(bfi1)
 
 bfi1 <- bfi1 %>%
-  filter(gender == "female") %>%
+  slice_sample(n = 20) %>%
   select(-matches("\\d$"))
 
 head(bfi1)
@@ -114,7 +190,7 @@ bfi1 <- bfi
 head(bfi1)
 
 bfi1 %<>%
-  filter(gender == "female") %>%
+  slice_sample(n = 20) %>%
   select(-matches("\\d$"))
 
 head(bfi1)
@@ -129,68 +205,38 @@ bfi1 <- bfi
 head(bfi1)
 
 bfi1 %<>%
-  filter(gender == "female") |>
+  slice_sample(n = 20) %>%
   select(-matches("\\d$"))
 
 head(bfi1)
 ```
 
-```{webr-r}
-#| autorun: true
-#| context: setup
-library(psychTools)
-data("bfi", package = "psychTools")
-library(dplyr) # load dplyr package
-library(psych) # load psych package
-names(bfi.keys) <- c("agree", "consc", "extra", "neuro", "open")
-tmp <- scoreItems(keys = bfi.keys, items = bfi, impute = "none")
-bfi <- data.frame(bfi, as.data.frame(tmp$scores)) %>%
-     mutate(
-        gender = factor(gender, labels = c("male", "female")),
-        agree_z = (agree - mean(agree, na.rm = TRUE)) / sd(agree, na.rm = TRUE),
-        consc_z = (consc - mean(consc, na.rm = TRUE)) / sd(consc, na.rm = TRUE),
-        extra_z = (extra - mean(extra, na.rm = TRUE)) / sd(extra, na.rm = TRUE),
-        neuro_z = (neuro - mean(neuro, na.rm = TRUE)) / sd(neuro, na.rm = TRUE),
-        open_z  = (open  - mean(open,  na.rm = TRUE)) / sd(open,  na.rm = TRUE),
-        gm = case_when(
-                  age < 18 & gender == "male"   ~ "boy",
-                  age < 18 & gender == "female" ~ "girl",
-                  age >= 18 & gender == "male"  ~ "man",
-                  age >= 18 & gender == "female"~ "woman",
-                  TRUE ~ NA_character_),
-        gm = as.factor(gm),
-        ) %>%
-        rename(ed = education,
-               gen = gender) %>%
-        rename_with(.fn = tolower, .cols = matches("\\d$"))
-```
-
-
 ::: practice
 
-## Practice
+Use the assignment pipe to create a pipeline that implements the following operations:
 
-Use the pipe and exposition pipe to calculate the correlation between `age` and `agree` for adults in the `bfi` data.
+1. Standardize every column in the `mtcars` dataset.
+1. Overwrites the original `mtcars` dataset with the standardized version.
 
 :::: {.panel-tabset}
+
 ## {{< var tab_title.editor >}}
 
 ```{webr-r}
-
 ```
 
 ## {{< var tab_title.hint >}}
 
-You can use the `cor()` function to compute the correlation between two variables.
+You can use the `scale()` function to standardize variables.
 
 ## {{< var tab_title.solution >}}
 
 ```{r}
-bfi %>%
-  filter(age >= 18) %$%
-  cor(age, agree)
+library(magrittr)
+
+mtcars %<>% scale()
 ```
+
 ::::
 
 :::
-

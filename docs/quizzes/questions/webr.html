@@ -368,7 +368,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"options":{"label":"unnamed-chunk-1","classes":"","read-only":"false","warning":"true","comment":"","output":"true","message":"true","fig-height":5,"editor-quick-suggestions":"false","fig-cap":"","editor-max-height":"","out-height":"","context":"setup","editor-word-wrap":"true","fig-width":7,"autorun":"true","editor-font-scale":"1","dpi":72,"out-width":"700px","results":"markup"},"code":"library(psychTools)\ndata(\"bfi\", package = \"psychTools\")\nlibrary(dplyr) # load dplyr package\nlibrary(psych) # load psych package\nnames(bfi.keys) <- c(\"agree\", \"consc\", \"extra\", \"neuro\", \"open\")\ntmp <- scoreItems(keys = bfi.keys, items = bfi, impute = \"none\")\nbfi <- data.frame(bfi, as.data.frame(tmp$scores)) %>%\n     mutate(\n        gender = factor(gender, labels = c(\"male\", \"female\")),\n        agree_z = (agree - mean(agree, na.rm = TRUE)) / sd(agree, na.rm = TRUE),\n        consc_z = (consc - mean(consc, na.rm = TRUE)) / sd(consc, na.rm = TRUE),\n        extra_z = (extra - mean(extra, na.rm = TRUE)) / sd(extra, na.rm = TRUE),\n        neuro_z = (neuro - mean(neuro, na.rm = TRUE)) / sd(neuro, na.rm = TRUE),\n        open_z  = (open  - mean(open,  na.rm = TRUE)) / sd(open,  na.rm = TRUE),\n        gm = case_when(\n                  age < 18 & gender == \"male\"   ~ \"boy\",\n                  age < 18 & gender == \"female\" ~ \"girl\",\n                  age >= 18 & gender == \"male\"  ~ \"man\",\n                  age >= 18 & gender == \"female\"~ \"woman\",\n                  TRUE ~ NA_character_),\n        gm = as.factor(gm),\n        ) %>%\n        rename(ed = education,\n               gen = gender) %>%\n        rename_with(.fn = tolower, .cols = matches(\"\\\\d$\"))","id":1},{"options":{"label":"unnamed-chunk-2","classes":"","read-only":"false","warning":"true","comment":"","output":"true","message":"true","fig-height":5,"editor-quick-suggestions":"false","fig-cap":"","editor-max-height":"","out-height":"","context":"interactive","editor-word-wrap":"true","fig-width":7,"autorun":"false","editor-font-scale":"1","dpi":72,"out-width":"700px","results":"markup"},"code":"","id":2}];
+globalThis.qwebrCellDetails = [{"id":1,"code":"library(psychTools)\ndata(\"bfi\", package = \"psychTools\")\nlibrary(dplyr) # load dplyr package\nlibrary(psych) # load psych package\nnames(bfi.keys) <- c(\"agree\", \"consc\", \"extra\", \"neuro\", \"open\")\ntmp <- scoreItems(keys = bfi.keys, items = bfi, impute = \"none\")\nbfi <- data.frame(bfi, as.data.frame(tmp$scores)) %>%\n     mutate(\n        gender = factor(gender, labels = c(\"male\", \"female\")),\n        agree_z = (agree - mean(agree, na.rm = TRUE)) / sd(agree, na.rm = TRUE),\n        consc_z = (consc - mean(consc, na.rm = TRUE)) / sd(consc, na.rm = TRUE),\n        extra_z = (extra - mean(extra, na.rm = TRUE)) / sd(extra, na.rm = TRUE),\n        neuro_z = (neuro - mean(neuro, na.rm = TRUE)) / sd(neuro, na.rm = TRUE),\n        open_z  = (open  - mean(open,  na.rm = TRUE)) / sd(open,  na.rm = TRUE),\n        gm = case_when(\n                  age < 18 & gender == \"male\"   ~ \"boy\",\n                  age < 18 & gender == \"female\" ~ \"girl\",\n                  age >= 18 & gender == \"male\"  ~ \"man\",\n                  age >= 18 & gender == \"female\"~ \"woman\",\n                  TRUE ~ NA_character_),\n        gm = as.factor(gm),\n        ) %>%\n        rename(ed = education,\n               gen = gender) %>%\n        rename_with(.fn = tolower, .cols = matches(\"\\\\d$\"))","options":{"warning":"true","read-only":"false","fig-width":7,"editor-quick-suggestions":"false","dpi":72,"editor-word-wrap":"true","message":"true","output":"true","classes":"","label":"unnamed-chunk-1","context":"setup","autorun":"true","editor-font-scale":"1","results":"markup","editor-max-height":"","fig-height":5,"fig-cap":"","out-height":"","comment":"","out-width":"700px"}},{"id":2,"code":"","options":{"warning":"true","read-only":"false","fig-width":7,"editor-quick-suggestions":"false","dpi":72,"editor-word-wrap":"true","message":"true","output":"true","classes":"","label":"unnamed-chunk-2","context":"interactive","autorun":"false","editor-font-scale":"1","results":"markup","editor-max-height":"","fig-height":5,"fig-cap":"","out-height":"","comment":"","out-width":"700px"}}];
 
 </script>
 <script type="module">
@@ -1622,19 +1622,6 @@ globalThis.qwebrExecuteCode = async function (
 
 </script>
 <style>
-div.callout-resource.callout {
-  border-left-color: orange;
-}
-div.callout-resource.callout-style-default > .callout-header {
-  background-color: rgb(from orange r g b / 13%);
-}
-div.callout-resource .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
-div.callout-resource.callout-style-default .callout-icon::before, div.callout-resource.callout-titled .callout-icon::before {
-  font-family: 'Font Awesome 6 Free', FontAwesome;
-  font-style: normal;
-  content: '\f0c1' !important;
-  background-image: none;
-}
 div.callout-reading.callout {
   border-left-color: purple;
 }
@@ -1643,19 +1630,6 @@ div.callout-reading.callout-style-default > .callout-header {
 }
 div.callout-reading .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
 div.callout-reading.callout-style-default .callout-icon::before, div.callout-reading.callout-titled .callout-icon::before {
-  font-family: 'Font Awesome 6 Free', FontAwesome;
-  font-style: normal;
-  content: '\f518' !important;
-  background-image: none;
-}
-div.callout-reading-advanced.callout {
-  border-left-color: red;
-}
-div.callout-reading-advanced.callout-style-default > .callout-header {
-  background-color: rgb(from red r g b / 13%);
-}
-div.callout-reading-advanced .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
-div.callout-reading-advanced.callout-style-default .callout-icon::before, div.callout-reading-advanced.callout-titled .callout-icon::before {
   font-family: 'Font Awesome 6 Free', FontAwesome;
   font-style: normal;
   content: '\f518' !important;
@@ -1672,6 +1646,32 @@ div.callout-practice.callout-style-default .callout-icon::before, div.callout-pr
   font-family: 'Font Awesome 6 Free', FontAwesome;
   font-style: normal;
   content: '\f085' !important;
+  background-image: none;
+}
+div.callout-reading-advanced.callout {
+  border-left-color: red;
+}
+div.callout-reading-advanced.callout-style-default > .callout-header {
+  background-color: rgb(from red r g b / 13%);
+}
+div.callout-reading-advanced .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
+div.callout-reading-advanced.callout-style-default .callout-icon::before, div.callout-reading-advanced.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f518' !important;
+  background-image: none;
+}
+div.callout-resource.callout {
+  border-left-color: orange;
+}
+div.callout-resource.callout-style-default > .callout-header {
+  background-color: rgb(from orange r g b / 13%);
+}
+div.callout-resource .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
+div.callout-resource.callout-style-default .callout-icon::before, div.callout-resource.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f0c1' !important;
   background-image: none;
 }
 </style>
@@ -1697,7 +1697,7 @@ div.callout-practice.callout-style-default .callout-icon::before, div.callout-pr
 <span class="menu-text">Open-Stat-Prog</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../../index.html" aria-current="page"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Pipes</span></a>
   </li>  
 </ul>
@@ -1740,12 +1740,6 @@ div.callout-practice.callout-style-default .callout-icon::before, div.callout-pr
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Overview</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../tutorials/motivation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Motivation</span></a>
   </div>
@@ -1759,7 +1753,7 @@ div.callout-practice.callout-style-default .callout-icon::before, div.callout-pr
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../tutorials/other_pipes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Different Pipe Operators in R</span></a>
+ <span class="menu-text">Different Pipe Operators</span></a>
   </div>
 </li>
         <li class="sidebar-item">

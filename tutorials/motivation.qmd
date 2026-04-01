@@ -132,7 +132,7 @@ tmp1 <- bfi %>%
          extra = rowMeans(across(matches("^e\\d$")), na.rm = TRUE),
          neuro = rowMeans(across(matches("^n\\d$")), na.rm = TRUE)) |>
   filter(age >= 0) |>
-  select(extra, neuro, age, gen, ed, gm) |>
+  select(extra, neuro, age, gender, education) |>
   arrange(extra)
 
 head(tmp1, 20)
@@ -147,7 +147,7 @@ tmp2 <- bfi
 tmp2$age   <- tmp2$age - 18
 tmp2$extra <- rowMeans(tmp2[grep("^e\\d$", colnames(tmp2))], na.rm = TRUE)
 tmp2$neuro <- rowMeans(tmp2[grep("^n\\d$", colnames(tmp2))], na.rm = TRUE)
-tmp2 <- tmp2[tmp2$age >= 0, c("extra", "neuro", "age", "gen", "ed", "gm")]
+tmp2 <- tmp2[tmp2$age >= 0, c("extra", "neuro", "age", "gender", "education")]
 tmp2 <- tmp2[order(tmp2$extra), ]
 
 head(tmp2, 20)

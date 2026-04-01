@@ -25,6 +25,39 @@ mean(bfi$age)
 bfi$age |> mean()
 ```
 
+::: practice
+
+Create a pipeline to complete the following operations on the `mtcars` dataset.
+
+1. Standardize each variable in the `mtcars` dataset.
+1. Compute the mean of each variable in the standardized `mtcars` data.
+
+Your solution should be a single pipeline that produces a length-one logical vector.
+
+:::: {.panel-tabset}
+
+## {{< var tab_title.editor >}}
+
+```{webr-r}
+```
+
+## {{< var tab_title.hint >}}
+
+You can use the following Base R functions in your solution:
+
+- `scale()`: Standardize variables
+- `colMeans()`: Compute the mean of each column in a matrix or data frame.
+
+## {{< var tab_title.solution >}}
+
+```{r}
+mtcars |> scale() |> colMeans()
+```
+
+::::
+
+:::
+
 The data piped into a function only fill the first argument. We're free to specify any additional inputs in the normal
 way. Hence, the following to expressions are also equivalent.
 
@@ -71,6 +104,7 @@ rnorm(1000, mean = m, sd = s) |>
   range() |>
   diff() > (1.5 * s^2)
 ```
+
 ::::
 
 :::
@@ -78,22 +112,23 @@ rnorm(1000, mean = m, sd = s) |>
 ### What if the dataset isn’t the first argument?
 
 Many R functions, particularly those that use a so-called *formula interface*, don’t take the input data as their first
-argument. If you try to include such a function in a normal pipeline, it won’t work.
+argument. If you try to include such a function in a normal pipeline, it won’t work. For example, in the following code,
+we try to use the `bfi` dataset to estimate a linear regression model wherein `age` and `open` predict `extra`.
 
 ```{r, error = TRUE}
-bfi |> lm(extra ~ age)
+bfi |> lm(extra ~ age + open)
 ```
 
 In these cases, you can use the special placeholder token `_` to tell R explicitly where to insert the piped object.
 
 ```{r}
-bfi |> lm(extra ~ age, data = _)
+bfi |> lm(extra ~ age + open, data = _)
 ```
 
 Note that we must name the argument to which we assign `_`. The following won't work.
 
 ```{r, error = TRUE}
-bfi |> lm(extra ~ age, _)
+bfi |> lm(extra ~ age + open, _)
 ```
 
 This trick makes it possible to use nearly any function in a pipeline, even when the dataset isn't the first argument.
@@ -101,43 +136,29 @@ This trick makes it possible to use nearly any function in a pipeline, even when
 ```{webr-r}
 #| autorun: true
 #| context: setup
-library(psychTools)
-data("bfi", package = "psychTools")
-library(dplyr) # load dplyr package
-library(psych) # load psych package
+
 names(bfi.keys) <- c("agree", "consc", "extra", "neuro", "open")
+
 tmp <- scoreItems(keys = bfi.keys, items = bfi, impute = "none")
-bfi <- data.frame(bfi, as.data.frame(tmp$scores)) %>%
-     mutate(
-        gender = factor(gender, labels = c("male", "female")),
-        agree_z = (agree - mean(agree, na.rm = TRUE)) / sd(agree, na.rm = TRUE),
-        consc_z = (consc - mean(consc, na.rm = TRUE)) / sd(consc, na.rm = TRUE),
-        extra_z = (extra - mean(extra, na.rm = TRUE)) / sd(extra, na.rm = TRUE),
-        neuro_z = (neuro - mean(neuro, na.rm = TRUE)) / sd(neuro, na.rm = TRUE),
-        open_z  = (open  - mean(open,  na.rm = TRUE)) / sd(open,  na.rm = TRUE),
-        gm = case_when(
-                  age < 18 & gender == "male"   ~ "boy",
-                  age < 18 & gender == "female" ~ "girl",
-                  age >= 18 & gender == "male"  ~ "man",
-                  age >= 18 & gender == "female"~ "woman",
-                  TRUE ~ NA_character_),
-        gm = as.factor(gm),
-        ) %>%
-        rename(ed = education,
-               gen = gender) %>%
-        rename_with(.fn = tolower, .cols = matches("\\d$"))
+
+bfi <- data.frame(bfi, as.data.frame(tmp$scores)) |>
+  mutate(gender = factor(gender, labels = c("male", "female"))) |>
+  rename_with(.fn = tolower, .cols = matches("\\d$"))
 ```
 
 ::: practice
 
-Use pipes to perform the following data manipulations on the `bfi` dataset:
+Create a pipeline to perform the following operations with the `bfi` dataset:
 
-1. Create a new variable `age_centered` that centers `age` around its mean.
-2. Filter the dataset to include only participants with `age` greater than 25.
-3. Select only the new centered age variable, the scores for agreeableness and conscientiousness, and the demographic variables `gen` and `ed`.
-4. Display the first 20 rows of the resulting dataset.
+1. Randomly sample $N = 500$ rows.
+   - Use `dplyr::slice_sample()`.
+1. Use the sampled rows to regress `agree` onto `extra`, `open`, and `gender`.
+   - Use `lm()`.
+1. Extract the residuals from the linear regression model.
+1. Compute the sum of the absolute values of the residuals.
 
 :::: {.panel-tabset}
+
 ## {{< var tab_title.editor >}}
 
 ```{webr-r}
@@ -146,83 +167,24 @@ Use pipes to perform the following data manipulations on the `bfi` dataset:
 ## {{< var tab_title.solution >}}
 
 ```{r}
-scale(iris)
-scale(bfi)
+library(dplyr)
+set.seed(235711)
 
-mtcars |> 
-  scale() |>
-  lm(mpg ~ disp + hp + wt, data = _) |>
+bfi |> 
+  slice_sample(n = 500) |>
+  lm(agree ~ extra + open + gender, data = _) |>
   resid() |>
-  sum() |>
-  sqrt()
-
-?Arithmetic
-
-lm(Petal.Length ~ Petal.Width + Species, data = iris)
-bfi |>
-  mutate(age_centered = age - mean(age, na.rm = TRUE)) |>
-  filter(age > 25) |>
-  select(age_centered, agree, consc, gen, ed) |>
-  head(20)
-```
-::::
-
-:::
-
-```{webr-r}
-#| autorun: true
-#| context: setup
-library(psychTools)
-data("bfi", package = "psychTools")
-library(dplyr) # load dplyr package
-library(psych) # load psych package
-names(bfi.keys) <- c("agree", "consc", "extra", "neuro", "open")
-tmp <- scoreItems(keys = bfi.keys, items = bfi, impute = "none")
-bfi <- data.frame(bfi, as.data.frame(tmp$scores)) %>%
-     mutate(
-        gender = factor(gender, labels = c("male", "female")),
-        agree_z = (agree - mean(agree, na.rm = TRUE)) / sd(agree, na.rm = TRUE),
-        consc_z = (consc - mean(consc, na.rm = TRUE)) / sd(consc, na.rm = TRUE),
-        extra_z = (extra - mean(extra, na.rm = TRUE)) / sd(extra, na.rm = TRUE),
-        neuro_z = (neuro - mean(neuro, na.rm = TRUE)) / sd(neuro, na.rm = TRUE),
-        open_z  = (open  - mean(open,  na.rm = TRUE)) / sd(open,  na.rm = TRUE),
-        gm = case_when(
-                  age < 18 & gender == "male"   ~ "boy",
-                  age < 18 & gender == "female" ~ "girl",
-                  age >= 18 & gender == "male"  ~ "man",
-                  age >= 18 & gender == "female"~ "woman",
-                  TRUE ~ NA_character_),
-        gm = as.factor(gm),
-        ) %>%
-        rename(ed = education,
-               gen = gender) %>%
-        rename_with(.fn = tolower, .cols = matches("\\d$"))
+  abs() |>
+  sum()
 ```
 
-::: practice
+*NOTES:*
 
-Use a pipeline to calculate the square root of the mean of the agreeableness scale score for males in the `bfi` data.
+- If you don't set the same (or any) seed, your code will produce a different value than the solution shown here
+because your code will sample a different set of rows.
+- If you set the same seed by running `set.seed(235711)` before your pipeline, you should get exactly the same result
+because `slice_sample()` will use the same sequence of pseudo random numbers to pick the rows it "randomly" samples.
 
-:::: {.panel-tabset}
-## {{< var tab_title.editor >}}
-
-```{webr-r}
-```
-
-## {{< var tab_title.hint >}}
-
-You can use the `unlist()` function to covert a list to a vector.
-
-## {{< var tab_title.solution >}}
-
-```{r}
-bfi |>
-  filter(gen == "male") |>
-  select(agree) |>
-  unlist() |>
-  mean(na.rm = TRUE) |>
-  sqrt()
-```
 ::::
 
 :::
